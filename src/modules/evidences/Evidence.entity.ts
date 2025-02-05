@@ -3,7 +3,7 @@ import { v7 as uuid } from 'uuid';
 import { Order } from '../orders/order.entity';
 
 @Entity({
-  name: 'entities',
+  name: 'evidences',
 })
 export class Evidence {
   @PrimaryGeneratedColumn('uuid')
