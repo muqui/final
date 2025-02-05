@@ -17,6 +17,7 @@ export class Evidence {
   @Column({
     type: 'date',
     nullable: false,
+    default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt: Date;
 

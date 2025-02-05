@@ -17,6 +17,7 @@ export class Notification {
 
   @Column({
     type: 'date',
+    default: () => 'CURRENT_TIMESTAMP',
     nullable: false,
   })
   createdAt: Date;
