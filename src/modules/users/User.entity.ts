@@ -1,6 +1,7 @@
 import { Role } from 'src/enum/Role.enum';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { v7 as uuid } from 'uuid';
+import { Order } from '../orders/order.entity';
 
 @Entity({
   name: 'users',
@@ -36,4 +37,7 @@ export class User {
     type: 'date',
   })
   createdAt: Date;
+
+  @OneToMany(() => Order, (orders) => orders.user)
+  order: Order[];
 }

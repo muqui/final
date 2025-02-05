@@ -14,8 +14,8 @@ const database = {
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   synchronize: true,
-  entities: ['dist/**/*.entity.{.ts,.js}'],
-  migrations: ['dist/migrations/*.{.ts,.js}'],
+  entities: ['dist/**/*.entity{.ts,.js}'],
+  migrations: ['dist/migrations/*{.ts,.js}'],
   autoLoadEntities: true,
   logging: true,
   //   dropSchema: true
