@@ -29,8 +29,14 @@ export class User {
   password: string;
 
   @Column({
+    nullable: false,
+  })
+  phone: string;
+
+  @Column({
     type: 'enum',
     enum: Role,
+    default: Role.CLIENT,
   })
   role: string;
 

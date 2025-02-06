@@ -8,6 +8,7 @@ import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Role } from 'src/enum/Role.enum';
 import * as bcrypt from 'bcrypt';
+import { SignInUserDto } from 'src/dto/users/signInUser.dto';
 
 @Injectable()
 export class AuthService {
@@ -24,7 +25,7 @@ export class AuthService {
 
     if (errors.length > 0) {
       const errorsMessage = errors.map((err) => {
-        return Object.values(err.constraints).join(', ');
+        return Object.values(err.constraints || {}).join(', ');
       });
       throw new BadRequestException(errorsMessage.join('; '));
     }
@@ -34,14 +35,15 @@ export class AuthService {
     });
 
     if (alreadyExist) {
-      throw new BadRequestException('El Correo Electrónico ya esta en uso');
+      throw new BadRequestException(
+        'El Correo Electrónico ya esta en uso. Ingresa uno diferente',
+      );
     }
 
     const hashedPassword = await bcrypt.hash(registerCreds.password, 10);
 
     const newUser = this.user.create({
       ...registerCreds,
-      role: registerCreds.role as Role,
       password: hashedPassword,
     });
 
@@ -49,6 +51,49 @@ export class AuthService {
 
     return {
       success: 'Registro Completado con exito',
+    };
+  }
+
+  async signIn(loginCreds: SignInUserDto): Promise<Object> {
+    console.log(loginCreds);
+
+    const credentialsInstance = plainToInstance(SignInUserDto, loginCreds);
+
+    const errors = await validate(credentialsInstance);
+
+    if (errors.length > 0) {
+      const errorsMessage = errors.map((err) => {
+        return Object.values(err.constraints || {}).join(',');
+      });
+      throw new BadRequestException(errorsMessage.join(';'));
+    }
+
+    const userFound = await this.user.findOne({
+      where: { email: loginCreds.email },
+    });
+
+    if (!userFound) {
+      throw new BadRequestException('El usuario no existe');
+    }
+
+    const validPassword = await bcrypt.compare(
+      loginCreds.password,
+      userFound.password,
+    );
+
+    if (!validPassword) {
+      throw new BadRequestException('Credenciales Invalidas');
+    }
+
+    const token = this.jwt.sign({
+      id: userFound.id,
+      email: userFound.email,
+      role: userFound.role,
+    });
+
+    return {
+      login: true,
+      token,
     };
   }
 }
