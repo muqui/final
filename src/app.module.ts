@@ -5,6 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import typeorm from './Config/typeorm';
 import { EvidencesModule } from './modules/evidences/evidences.module';
+import { AuthModule } from './modules/Authentication/auth.module';
+import { JwtModule } from '@nestjs/jwt';
+import { config as envConfig } from 'dotenv';
+
+// Usando dotenv para tomar el valor de la variable de entorno JWT_SECRET.
+envConfig({
+  path: '.env',
+});
 
 @Module({
   imports: [
@@ -16,9 +24,15 @@ import { EvidencesModule } from './modules/evidences/evidences.module';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => config.get('typeorm'),
     }),
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: 28400 }, // Expira en 24 horas, cheqeuar si el numero de segundos es correcto.
+    }),
     UsersModule,
     OrdersModule,
     EvidencesModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
