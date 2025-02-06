@@ -1,6 +1,6 @@
 
 
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "../users/User.entity";
 import { OrderHistory } from "../orderHistories/orderHistory.entity";
 
@@ -38,7 +38,7 @@ export class Order {
   @OneToMany (() => Evidence, evidence => evidence.order)
   evidences: Evidence [];
 
-  @OneToMany (() => Payment, payment => payment.order)
+  @OneToOne (() => Payment, payment => payment.order)
   payments: Payment [];
 
 }
