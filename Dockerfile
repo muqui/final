@@ -1,22 +1,19 @@
+# Usamos una imagen optimizada de Node.js
+FROM node:18-alpine 
 
+# Establecer el directorio de trabajo
+WORKDIR /app 
 
-# Usamos la imagen oficial de Node.js
-FROM node:18-alpine
-
-# Establecer el directorio de trabajo dentro del contenedor
-WORKDIR /app
-
-# Copiar el package.json y package-lock.json
+# Copiar package.json e instalar dependencias de producción
 COPY package*.json ./
+RUN npm install --omit=dev
 
-# Instalar dependencias
-RUN npm install
+# Copiar el resto del código y compilar TypeScript
+COPY . . 
+RUN npm run build  # 👈 Asegurar que la compilación genera dist/main.js
 
-# Copiar el resto del código al contenedor
-COPY . .
+# Exponer el puerto (Render lo asigna automáticamente)
+EXPOSE 3000 
 
-# Exponer el puerto en el que corre NestJS
-EXPOSE 3000
-
-# Comando para ejecutar la aplicación
-CMD ["npm", "run", "start:prod"]
+# Comando para ejecutar la aplicación en producción
+CMD ["node", "dist/main.js"]
