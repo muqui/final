@@ -12,7 +12,9 @@ import { Payment } from '../payments/Payment.entity';
 import { Notification } from '../notifications/Notification.entity';
 import { Evidence } from '../evidences/Evidence.entity';
 
-@Entity('orders')
+@Entity({
+  name: 'orders',
+})
 export class Order {
   @PrimaryGeneratedColumn('uuid')
   id: string;
