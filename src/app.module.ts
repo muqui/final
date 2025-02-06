@@ -1,0 +1,26 @@
+import { Module } from '@nestjs/common';
+import { UsersModule } from './modules/users/users.module';
+import { OrdersModule } from './modules/orders/orders.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import typeorm from './Config/typeorm';
+import { EvidencesModule } from './modules/evidences/evidences.module';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [typeorm],
+    }),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => config.get('typeorm'),
+    }),
+    UsersModule,
+    OrdersModule,
+    EvidencesModule,
+  ],
+  controllers: [],
+  providers: [],
+})
+export class AppModule {}
