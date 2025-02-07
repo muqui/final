@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { EvidencesService } from './evidences.service';
 import { CreateEvidenceDto } from 'src/dto/evidences/createEvidence.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -8,12 +8,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class EvidencesController {
   constructor(private readonly evidencesService: EvidencesService) {}
 
-  @Post('img')
-  async createEvidenceWittoutImage(
-    @Body() createEvidenceDto: CreateEvidenceDto,
-  ) {
-    return this.evidencesService.createEvidence(createEvidenceDto);
-  }
+
 
   @Post()
   @UseInterceptors(FileInterceptor('image'))
@@ -29,10 +24,15 @@ export class EvidencesController {
       return this.evidencesService.getEvidences();
   }
 
-  @Get(':orderId')
-  getEvidencesByOrderId(@Param('orderId') orderId: string){
+  @Get(':id')
+  getEvidencesByOrderId(@Param('id') id: string){
      
-      return this.evidencesService.getEvidencesByOrderId(orderId)
+      return this.evidencesService.getEvidencesById(id)
       
+  }
+
+  @Delete(':id')
+  async deleteEvidence(@Param('id') id: string) {
+    return this.evidencesService.deleteEvidence(id);
   }
 }
