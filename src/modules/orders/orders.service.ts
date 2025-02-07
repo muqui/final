@@ -19,9 +19,27 @@ export class OrdersService {
 
   }
 
-  async getAll (): Promise<Order[]> {
+  async getAll (): Promise<Order []> {
 
-    return this.ordersRepository.getAll ();
+    return this.ordersRepository.getAll ();    
+
+  }
+
+  async getByEmail (clientEmail: string): Promise<Order []> {
+
+    return this.ordersRepository.getByEmail (clientEmail);
+
+  }
+  
+  async getByTechnId (technId: string): Promise<Order []> {
+
+    return this.ordersRepository.getByTechnId (technId);
+
+  }    
+
+  async getByStatus (status: string): Promise<Order []> {
+
+    return this.ordersRepository.getByStatus (status);
 
   }
 
@@ -30,13 +48,7 @@ export class OrdersService {
     return this.ordersRepository.getById (id);
 
   }
-
-  async getByStatus (status: string): Promise<Order []> {
-
-    return this.ordersRepository.getByStatus (status);
-
-  }
-
+  
   async update (id: string, updateOrderDto: UpdateOrderDto): Promise<Order> {
 
     await this.ordersRepository.update (id, updateOrderDto);
@@ -44,9 +56,9 @@ export class OrdersService {
 
   }
 
-  async delete (id: string): Promise<void> {
+  async inactiveDelete (id: string): Promise<void> {
 
-    return this.ordersRepository.delete (id);
+    return this.ordersRepository.inactiveDelete (id);
 
   }  
 

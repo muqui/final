@@ -2,11 +2,11 @@
 
 import { Controller, Patch, Param, Body, Get, Post, Delete } from '@nestjs/common';
 import { OrdersService } from '../orders/orders.service';
-
 import { CreateOrderDto } from '../../dto/orders/createOrder.dto';
 import { OrderHistoriesService } from '../orderHistories/orderHistories.service';
 import { Order } from './Order.entity';
-import { UpdateOrderDto } from 'src/dto/orders/updateOrder.dto';
+import { UpdateOrderDto } from '../../dto/orders/updateOrder.dto';
+import { OrderStatus } from '../../enum/orderstatus.enum';
 
 @Controller ('orders')
 
@@ -21,17 +21,30 @@ export class OrdersController {
 
   @Get ()
 
-  async getAll (): Promise<Order[]> {
+  async getAll (): Promise<Order []> {
 
     return this.ordersService.getAll ();
 
   }
+  
+  @Get ('email/:clientEmail')
+
+  async getByEmail (@Param('clientEmail') clientEmail: string): Promise<Order []> {
+
+    return this.ordersService.getByEmail(clientEmail);
+
+  }
+
+  @Get('technician/:technId')
+  async getByTechnId (@Param('technId') technId: string): Promise<Order[]> {
+    return this.ordersService.getByTechnId(technId);
+  }
 
   @Get ('status/:status')
 
-  async getByStatus (@Param ('status') status: string): Promise<Order []> {
+  async getByStatus (@Param ('status') status: OrderStatus): Promise<Order []> {
 
-    return this.ordersService.getByStatus (status);
+    return this.ordersService.getByStatus(status);
 
   }
 
@@ -46,60 +59,60 @@ export class OrdersController {
   @Post ()
 
   async create (@Body () createOrderDto: CreateOrderDto): Promise<Order> {
-
     return this.ordersService.create (createOrderDto);
 
   }
 
-  @Patch (':id/status')
+  @Patch (':id')
 
   async update (
 
     @Param ('id') orderId: string,
-    @Body () updateOrderDto: UpdateOrderDto, 
+    @Body () updateOrderDto: UpdateOrderDto,
 
   ): Promise<Order> {
+    const updatedOrder = await this.ordersService.update(orderId, updateOrderDto);
 
-    const updatedOrder = await this.ordersService.update (orderId, updateOrderDto);
+    if (updateOrderDto.status) {
 
-    if (updateOrderDto.status === 'EN PROCESO') {
+      let eventMessage = '';
 
-      await this.orderHistoriesService.create ({
+      switch (updateOrderDto.status) {
 
-        orderId,
-        event: 'Servicio iniciado',
-        dateTime: new Date (), 
+        case OrderStatus.STARTED:
+          eventMessage = 'Servicio iniciado';
+          break;
+        case OrderStatus.COMPLETED:
+          eventMessage = 'Servicio finalizado';
+          break;
 
-      });
+      }
 
-    } 
-    
-    else if (updateOrderDto.status === 'FINALIZADO') {
+      if (eventMessage) {
 
-      await this.orderHistoriesService.create ({
+        await this.orderHistoriesService.create ({
 
-        orderId,
-        event: 'Servicio finalizado',
-        dateTime: new Date(), 
+          orderId,
+          event: eventMessage,
+          dateTime: new Date(),
 
-      });
+        });
+
+      }
 
     }
 
     return updatedOrder;
-
   }
 
   @Delete (':id')
+  async delete (@Param ('id') orderId: string): Promise<void> {
 
-  async delete (@Param('id') orderId: string): Promise<void> {
-
-    await this.ordersService.delete (orderId);
+    await this.ordersService.inactiveDelete(orderId);
 
   }
-
+  
 }
-
 
 
 
