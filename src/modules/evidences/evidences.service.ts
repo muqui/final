@@ -20,22 +20,17 @@ export class EvidencesService {
     createEvidenceDto: CreateEvidenceDto,
     file: Express.Multer.File,
   ) {
-    // Si `createEvidenceDto` es un string JSON, parsealo
-    const jsonString = JSON.stringify(createEvidenceDto);
-
-    const parsedObj = JSON.parse(jsonString);
-    const createEvidenceDtoR = JSON.parse(parsedObj.createEvidenceDto);
-
-    console.log(createEvidenceDtoR.orderId);
-
+    if (!isUUID(createEvidenceDto.orderId)) {
+      throw new BadRequestException(`El Order ID (${createEvidenceDto.orderId}) no es un UUID válido.`);
+    }
     // Buscar la orden en la base de datos
-    const order = await this.ordersService.getById(createEvidenceDtoR.orderId)
+    const order = await this.ordersService.getById(createEvidenceDto.orderId)
 
     if (!order) {
-      throw new Error('Order not found');
+      throw new NotFoundException(` Nose encontro la order: ${createEvidenceDto.orderId} .`);
     }
     const saveFile = await this.cloudinaryService.upladImage(file); //subimos la imagen
-    createEvidenceDtoR.fileUrl = saveFile.secure_url;
+    createEvidenceDto.fileUrl = saveFile.secure_url;
 
     // 📝 Crear la evidencia con la relación a la orden
     const newEvidence = this.evidenceRepository.create({
@@ -70,6 +65,9 @@ export class EvidencesService {
 
   async deleteEvidence(id: string): Promise<{ message: string }> {
     // Buscar la evidencia en la base de datos
+    if (!isUUID(id)) {
+      throw new BadRequestException(`El  ID (${id}) no es un UUID válido.`);
+    }
     const evidence = await this.evidenceRepository.findOne({ where: { id } });
 
     if (!evidence) {
