@@ -5,7 +5,7 @@ import { IsString, IsEmail, IsNotEmpty, IsNumber } from 'class-validator';
 export class CreateOrderDto {
 
   @IsString ()
-  @IsNotEmpty ()
+  //@IsNotEmpty ()
   readonly userId: string;
 
   @IsEmail ()

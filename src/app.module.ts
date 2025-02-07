@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import typeorm from './Config/typeorm';
 import { EvidencesModule } from './modules/evidences/evidences.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { EvidencesModule } from './modules/evidences/evidences.module';
     UsersModule,
     OrdersModule,
     EvidencesModule,
+    NotificationsModule
   ],
   controllers: [],
   providers: [],
