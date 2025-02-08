@@ -16,7 +16,6 @@ import { OrderHistory } from '../orderHistories/orderHistory.entity';
 @Entity({
   name: 'orders',
 })
-
 export class Order {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -50,5 +49,4 @@ export class Order {
 
   @OneToOne(() => Payment, (payment) => payment.order)
   payment: Payment;
-  
 }
