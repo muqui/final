@@ -4,11 +4,13 @@ import { Notification } from "./Notification.entity";
 import { Repository } from "typeorm";
 import { Order } from "../orders/Order.entity";
 import { CreateNotificationDto } from "src/dto/notification/notification.dto";
+import { MailService } from "../mail/mail.service";
 
 @Injectable() 
 export class NotificationsRepository {
     constructor(@InjectRepository(Notification) private notificationRepository: Repository<Notification>,
-    @InjectRepository(Order) private orderRepository: Repository<Order>){}
+    @InjectRepository(Order) private orderRepository: Repository<Order>,
+    private readonly mailService: MailService){}
 
     async create(createNotificationDto: CreateNotificationDto): Promise<Notification> {
         const order = await this.orderRepository.findOne({ where: { id: createNotificationDto.orderId }, relations:{} });
@@ -20,9 +22,13 @@ export class NotificationsRepository {
         const notification = this.notificationRepository.create({
           message: createNotificationDto.message,
           order,
-        });
+        }); 
     
         await this.notificationRepository.save(notification);
+
+// logica de notificacion por email, Enviar email al cliente
+       await this.mailService.sendNotificationEmail(order.clientEmail, createNotificationDto.message);
+
         return notification;
       }
     
