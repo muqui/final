@@ -16,12 +16,20 @@ export class OrdersService {
     return this.ordersRepository.getAll();
   }
 
-  async getById(id: string): Promise<Order> {
-    return this.ordersRepository.getById(id);
+  async getByEmail(clientEmail: string): Promise<Order[]> {
+    return this.ordersRepository.getByEmail(clientEmail);
+  }
+
+  async getByTechnId(technId: string): Promise<Order[]> {
+    return this.ordersRepository.getByTechnId(technId);
   }
 
   async getByStatus(status: string): Promise<Order[]> {
     return this.ordersRepository.getByStatus(status);
+  }
+
+  async getById(id: string): Promise<Order> {
+    return this.ordersRepository.getById(id);
   }
 
   async update(id: string, updateOrderDto: UpdateOrderDto): Promise<Order> {
@@ -29,7 +37,7 @@ export class OrdersService {
     return this.getById(id);
   }
 
-  async delete(id: string): Promise<void> {
-    return this.ordersRepository.delete(id);
+  async inactiveDelete(id: string): Promise<void> {
+    return this.ordersRepository.inactiveDelete(id);
   }
 }

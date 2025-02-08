@@ -1,23 +1,36 @@
-import { IsString, IsEmail, IsNotEmpty, IsNumber } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+import { EquipmentType } from '../../enum/equipmentype.enum';
+import { OrderStatus } from '../../enum/orderstatus.enum';
 
 export class CreateOrderDto {
-  @IsString()
   @IsNotEmpty()
-  readonly userId: string;
-
   @IsEmail()
+  clientEmail: string;
+
   @IsNotEmpty()
-  readonly clientEmail: string;
+  clientDni: number;
+
+  @IsEnum(EquipmentType)
+  equipmentType: EquipmentType;
 
   @IsString()
   @IsNotEmpty()
-  readonly description: string;
+  imei: string;
+
+  @IsOptional()
+  assignedTechnicianId?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  description: string;
 
   @IsString()
   @IsNotEmpty()
-  readonly status: string;
-
-  @IsNumber()
-  @IsNotEmpty()
-  readonly clientDni: number;
+  status: OrderStatus;
 }
