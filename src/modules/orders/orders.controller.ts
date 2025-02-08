@@ -26,11 +26,6 @@ export class OrdersController {
     return this.ordersService.getAll();
   }
 
-  
-  @Get ('email/:clientEmail')
-
-  async getByEmail (@Param ('clientEmail') clientEmail: string): Promise<Order []> {
-
 
   @Get('email/:clientEmail')
   async getByEmail(
