@@ -3,7 +3,6 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { v7 as uuid } from 'uuid';
 import { Order } from '../orders/Order.entity';
 
-
 @Entity({
   name: 'users',
 })
@@ -20,6 +19,7 @@ export class User {
   @Column({
     length: 50,
     nullable: false,
+    unique: true,
   })
   email: string;
 
@@ -29,8 +29,14 @@ export class User {
   password: string;
 
   @Column({
+    nullable: false,
+  })
+  phone: string;
+
+  @Column({
     type: 'enum',
     enum: Role,
+    default: Role.CLIENT,
   })
   role: string;
 

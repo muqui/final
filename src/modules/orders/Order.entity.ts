@@ -1,5 +1,3 @@
-
-
 import {
   Column,
   Entity,
@@ -27,7 +25,7 @@ export class Order {
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne(() => User, { nullable: true }) 
+  @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: 'assignedTechnicianId' })
   assignedTechnician: User | null;
 
@@ -69,4 +67,3 @@ export class Order {
   @OneToOne(() => Payment, (payment) => payment.order)
   payment: Payment;
 }
-
