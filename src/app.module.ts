@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import typeorm from './Config/typeorm';
 import { EvidencesModule } from './modules/evidences/evidences.module';
+
 import { AuthModule } from './modules/Authentication/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { config as envConfig } from 'dotenv';
@@ -13,6 +14,9 @@ import { config as envConfig } from 'dotenv';
 envConfig({
   path: '.env',
 });
+
+import { NotificationsModule } from './modules/notifications/notifications.module';
+import { MailModule } from './modules/mail/mail.module';
 
 @Module({
   imports: [
@@ -33,6 +37,8 @@ envConfig({
     OrdersModule,
     EvidencesModule,
     AuthModule,
+    NotificationsModule,
+    MailModule,
   ],
   controllers: [],
   providers: [],
