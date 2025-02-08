@@ -1,27 +1,23 @@
-
-
 import { IsString, IsEmail, IsNotEmpty, IsNumber } from 'class-validator';
 
 export class CreateOrderDto {
-
-  @IsString ()
-  //@IsNotEmpty ()
+  @IsString()
+  @IsNotEmpty()
   readonly userId: string;
 
-  @IsEmail ()
-  @IsNotEmpty ()
+  @IsEmail()
+  @IsNotEmpty()
   readonly clientEmail: string;
-  
-  @IsString ()
-  @IsNotEmpty ()
+
+  @IsString()
+  @IsNotEmpty()
   readonly description: string;
 
-  @IsString ()
-  @IsNotEmpty ()
+  @IsString()
+  @IsNotEmpty()
   readonly status: string;
 
-  @IsNumber ()
-  @IsNotEmpty ()
+  @IsNumber()
+  @IsNotEmpty()
   readonly clientDni: number;
-
 }
