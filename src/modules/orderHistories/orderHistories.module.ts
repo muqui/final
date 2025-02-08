@@ -15,6 +15,7 @@ import { OrdersModule } from '../orders/orders.module';
 
   providers: [OrderHistoriesService, OrdersHistoriesRepository],
 
-  exports: [OrderHistoriesService],
+  exports: [TypeOrmModule,OrderHistoriesService],
+  
 })
 export class OrderHistoriesModule {}

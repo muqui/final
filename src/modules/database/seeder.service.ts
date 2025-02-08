@@ -1,0 +1,214 @@
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
+
+import { User } from '../users/User.entity';
+import { Order } from '../orders/Order.entity';
+import { Evidence } from '../evidences/Evidence.entity';
+import { OrderHistory } from '../orderHistories/orderHistory.entity';
+
+import { Role } from 'src/enum/Role.enum';
+import { EquipmentType } from 'src/enum/equipmentype.enum';
+import { OrderStatus } from 'src/enum/orderstatus.enum';
+
+@Injectable()
+export class SeedService {
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+
+    @InjectRepository(Order)
+    private readonly orderRepository: Repository<Order>,
+
+    @InjectRepository(Evidence)
+    private readonly evidenceRepository: Repository<Evidence>,
+
+    @InjectRepository(OrderHistory)
+    private readonly orderHistoryRepository: Repository<OrderHistory>,
+    private readonly dataSource: DataSource,
+  ) {}
+
+  async clearDatabase() {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+  
+    try {
+      await queryRunner.startTransaction();
+  
+      // Desactivar temporalmente las restricciones de claves foráneas
+      await queryRunner.query('SET session_replication_role = replica;');
+  
+      // Eliminar datos en el orden correcto
+      await queryRunner.query('DELETE FROM "orderhistories";');
+      await queryRunner.query('DELETE FROM "evidences";');
+      await queryRunner.query('DELETE FROM "orders";');
+      await queryRunner.query('DELETE FROM "users";');
+      await queryRunner.query('DELETE FROM "payments";');
+      await queryRunner.query('DELETE FROM "notifications";');
+  
+      // Reactivar restricciones de claves foráneas
+      await queryRunner.query('SET session_replication_role = DEFAULT;');
+  
+      await queryRunner.commitTransaction();
+      
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      
+    } finally {
+      await queryRunner.release();
+    }
+  }
+  
+  async seedData() {
+    this.clearDatabase();
+    console.log('🌱 Iniciando precarga de datos...');
+
+    const hashedPassword = await bcrypt.hash('Num12345678', 10);
+
+    // Crear usuarios con diferentes roles
+    const users = [
+      this.userRepository.create({
+        name: 'Admin',
+        email: 'admin@hotmail.com',
+        password: hashedPassword,
+        phone: '1234567890',
+        role: Role.ADMIN,
+      }),
+      this.userRepository.create({
+        name: 'Cliente1',
+        email: 'cliente1@hotmail.com',
+        password: hashedPassword,
+        phone: '1234567891',
+        role: Role.CLIENT,
+      }),
+      this.userRepository.create({
+        name: 'Cliente2',
+        email: 'cliente2@hotmail.com',
+        password: hashedPassword,
+        phone: '1234567892',
+        role: Role.CLIENT,
+      }),
+      this.userRepository.create({
+        name: 'Técnico',
+        email: 'tecnico@hotmail.com',
+        password: hashedPassword,
+        phone: '1234567893',
+        role: Role.TECHN,
+      }),
+      this.userRepository.create({
+        name: 'Técnico',
+        email: 'tecnico1@hotmail.com',
+        password: hashedPassword,
+        phone: '1234567893',
+        role: Role.TECHN,
+      }),
+    ];
+
+    const savedUsers = await this.userRepository.save(users);
+    console.log(`✅ Se crearon ${savedUsers.length} usuarios`);
+
+    const [admin, client1, client2, technician, technician1] = savedUsers;
+
+    // Crear órdenes con diferentes estados y equipos
+    const orders = [
+      this.orderRepository.create({
+        clientEmail: client1.email,
+        clientDni: 12345678,
+        equipmentType: EquipmentType.CELULAR,
+        imei: '123456789012345',
+        assignedTechnician: technician,
+        description: 'Cambio de pantalla',
+        status: OrderStatus.STARTED,
+        user: client1,
+      }),
+      this.orderRepository.create({
+        clientEmail: client2.email,
+        clientDni: 87654321,
+        equipmentType: EquipmentType.LAPTOP,
+        imei: '987654321098765',
+        assignedTechnician: technician,
+        description: 'Reparación de teclado',
+        status: OrderStatus.STARTED,
+        user: client2,
+      }),
+      this.orderRepository.create({
+        clientEmail: client1.email,
+        clientDni: 12345678,
+        equipmentType: EquipmentType.TABLET,
+        imei: '456789012345678',
+        assignedTechnician: technician,
+        description: 'Fallo en batería',
+        status: OrderStatus.COMPLETED,
+        user: client1,
+      }),
+      this.orderRepository.create({
+        clientEmail: client2.email,
+        clientDni: 87654321,
+        equipmentType: EquipmentType.CELULAR,
+        imei: '321098765432109',
+        assignedTechnician: technician,
+        description: 'No enciende',
+        status: OrderStatus.PENDING,
+        user: client2,
+      }),
+      this.orderRepository.create({
+        clientEmail: client2.email,
+        clientDni: 87654321,
+        equipmentType: EquipmentType.CELULAR,
+        imei: '321098765432109',
+        assignedTechnician: technician1,
+        description: 'No enciende',
+        status: OrderStatus.STARTED,
+        user: client2,
+      }),
+    ];
+
+    const savedOrders = await this.orderRepository.save(orders);
+    console.log(`✅ Se crearon ${savedOrders.length} órdenes`);
+
+    // Agregar evidencias a cada orden (2 evidencias por orden)
+    const fileUrl = "https://res.cloudinary.com/dc73yo3jo/image/upload/v1739028403/uaujalru4u5zznijhlxn.jpg";
+    for (const order of savedOrders) {
+      const evidences = [
+        this.evidenceRepository.create({
+          fileUrl:fileUrl,
+          order,
+        }),
+        this.evidenceRepository.create({
+          fileUrl,
+          order,
+        }),
+      ];
+      await this.evidenceRepository.save(evidences);
+      console.log(`✅ Evidencias creadas para orden ID ${order.id}`);
+    }
+
+    //Agregar historial de eventos a cada orden
+    for (const order of savedOrders) {
+      const orderHistories = [
+        this.orderHistoryRepository.create({
+          event: 'Orden creada',
+          order,
+        }),
+        this.orderHistoryRepository.create({
+          event: 'Asignada a técnico',
+          order,
+        }),
+        this.orderHistoryRepository.create({
+          event: 'Diagnóstico en curso',
+          order,
+        }),
+        this.orderHistoryRepository.create({
+          event: `Estado actualizado a: ${order.status}`,
+          order,
+        }),
+      ];
+      await this.orderHistoryRepository.save(orderHistories);
+      console.log(`Historial creado para orden ID ${order.id}`);
+    }
+
+   
+    return "cargada la informacion a la base de datos"
+  }
+}

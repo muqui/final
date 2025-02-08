@@ -17,6 +17,7 @@ import { EvidencesModule } from '../evidences/evidences.module';
 
   controllers: [OrdersController],
   providers: [OrdersService, OrdersRepository],
-  exports: [OrdersService],
+  exports: [TypeOrmModule, OrdersService],
+  
 })
 export class OrdersModule {}

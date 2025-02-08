@@ -16,5 +16,6 @@ import { OrdersModule } from '../orders/orders.module';
 ],
   controllers: [EvidencesController],
   providers: [EvidencesService, CloudinaryService, CloudinaryConfig],
+   exports: [TypeOrmModule, EvidencesService],
 })
 export class EvidencesModule {}
