@@ -2,7 +2,6 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { v7 as uuid } from 'uuid';
 import { Order } from '../orders/Order.entity';
 
-
 @Entity({
   name: 'notifications',
 })

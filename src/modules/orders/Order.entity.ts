@@ -1,5 +1,3 @@
-
-
 import {
   Column,
   Entity,
@@ -25,7 +23,9 @@ export class Order {
   @PrimaryGeneratedColumn ('uuid')
   id: string = uuid ();
 
+
   @Column ({ name: 'clientEmail' })
+
   clientEmail: string;
   
   @Column ({name: 'clientDni'})
@@ -75,4 +75,3 @@ export class Order {
   payment: Payment;
 
 }
-
