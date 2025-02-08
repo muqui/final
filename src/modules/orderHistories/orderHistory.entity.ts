@@ -7,7 +7,6 @@ import {
 } from 'typeorm';
 import { Order } from '../orders/Order.entity';
 
-
 @Entity('orderhistories')
 export class OrderHistory {
   @PrimaryGeneratedColumn()
@@ -22,5 +21,4 @@ export class OrderHistory {
   @ManyToOne(() => Order, (order) => order.orderHistories, { eager: true })
   @JoinColumn({ name: 'orderid' })
   order: Order;
-  
 }
