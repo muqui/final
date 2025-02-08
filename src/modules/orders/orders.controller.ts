@@ -29,22 +29,22 @@ export class OrdersController {
   
   @Get ('email/:clientEmail')
 
-  async getByEmail (@Param('clientEmail') clientEmail: string): Promise<Order []> {
+  async getByEmail (@Param ('clientEmail') clientEmail: string): Promise<Order []> {
 
     return this.ordersService.getByEmail(clientEmail);
 
   }
 
-  @Get('technician/:technId')
-  async getByTechnId (@Param('technId') technId: string): Promise<Order[]> {
-    return this.ordersService.getByTechnId(technId);
+  @Get ('technician/:technId')
+  async getByTechnId (@Param ('technId') technId: string): Promise<Order []> {
+    return this.ordersService.getByTechnId (technId);
   }
 
   @Get ('status/:status')
 
   async getByStatus (@Param ('status') status: OrderStatus): Promise<Order []> {
 
-    return this.ordersService.getByStatus(status);
+    return this.ordersService.getByStatus (status);
 
   }
 
@@ -71,7 +71,7 @@ export class OrdersController {
     @Body () updateOrderDto: UpdateOrderDto,
 
   ): Promise<Order> {
-    const updatedOrder = await this.ordersService.update(orderId, updateOrderDto);
+    const updatedOrder = await this.ordersService.update (orderId, updateOrderDto);
 
     if (updateOrderDto.status) {
 
@@ -94,7 +94,7 @@ export class OrdersController {
 
           orderId,
           event: eventMessage,
-          dateTime: new Date(),
+          dateTime: new Date (),
 
         });
 
@@ -108,7 +108,7 @@ export class OrdersController {
   @Delete (':id')
   async delete (@Param ('id') orderId: string): Promise<void> {
 
-    await this.ordersService.inactiveDelete(orderId);
+    await this.ordersService.inactiveDelete (orderId);
 
   }
   

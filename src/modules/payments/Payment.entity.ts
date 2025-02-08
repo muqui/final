@@ -22,6 +22,6 @@ export class Payment {
   price: number;
 
   @OneToOne(() => Order, (order) => order.payment)
-  @JoinColumn({ name: 'order_Id' })
+  @JoinColumn({ name: 'order_id' })
   order: Order;
 }

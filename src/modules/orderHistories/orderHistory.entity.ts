@@ -22,7 +22,7 @@ export class OrderHistory {
   dateTime: Date;
 
   @ManyToOne(() => Order, (order) => order.orderHistories, { eager: true })
-  @JoinColumn({ name: 'orderid' })
+  @JoinColumn({ name: 'order_id' })
   order: Order;
   
 }

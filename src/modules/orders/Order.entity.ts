@@ -17,30 +17,21 @@ import { Evidence } from '../evidences/Evidence.entity';
 import { OrderHistory } from '../orderHistories/orderHistory.entity';
 import { EquipmentType } from '../../enum/equipmentype.enum';
 import { OrderStatus } from 'src/enum/orderstatus.enum';
+import { v7 as uuid } from 'uuid';
 
-@Entity({ name: 'orders' })
+@Entity ({ name: 'orders' })
 export class Order {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  
+  @PrimaryGeneratedColumn ('uuid')
+  id: string = uuid ();
 
-  @ManyToOne(() => User, (user) => user.order, { eager: true })
-  @JoinColumn({ name: 'userId' })
-  user: User;
-
-  @ManyToOne(() => User, { nullable: true }) 
-  @JoinColumn({ name: 'assignedTechnicianId' })
-  assignedTechnician: User | null;
-
-  @Column()
+  @Column ({ name: 'clientEmail' })
   clientEmail: string;
-
-  @Column()
-  description: string;
-
-  @Column()
+  
+  @Column ({name: 'clientDni'})
   clientDni: number;
-
-  @Column({
+ 
+  @Column ({
     type: 'enum',
     enum: EquipmentType,
     nullable: false,
@@ -49,6 +40,16 @@ export class Order {
   })
   equipmentType: EquipmentType;
 
+  @Column ()
+  imei: string; 
+
+  @ManyToOne(() => User, { nullable: true }) 
+  @JoinColumn({ name: 'assignedTechnicianId' })
+  assignedTechnician: User | null;
+
+  @Column ()
+  description: string;  
+
   @Column({
     type: 'enum',
     enum: OrderStatus,
@@ -56,17 +57,22 @@ export class Order {
     default: OrderStatus.STARTED,
   })
   status: OrderStatus;
+ 
+  @ManyToOne (() => User, (user) => user.order, { eager: true })
+  @JoinColumn({ name: 'userId' })
+  user: User;
 
   @OneToMany(() => OrderHistory, (orderHistory) => orderHistory.order)
-  orderHistories: OrderHistory[];
-
-  @OneToMany(() => Notification, (notification) => notification.order)
-  notifications: Notification[];
+  orderHistories: OrderHistory [];
 
   @OneToMany(() => Evidence, (evidence) => evidence.order)
   evidences: Evidence[];
 
+  @OneToMany(() => Notification, (notification) => notification.order)
+  notifications: Notification [];
+  
   @OneToOne(() => Payment, (payment) => payment.order)
   payment: Payment;
+
 }
 
