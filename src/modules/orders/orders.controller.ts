@@ -26,6 +26,12 @@ export class OrdersController {
     return this.ordersService.getAll();
   }
 
+  
+  @Get ('email/:clientEmail')
+
+  async getByEmail (@Param ('clientEmail') clientEmail: string): Promise<Order []> {
+
+
   @Get('email/:clientEmail')
   async getByEmail(
     @Param('clientEmail') clientEmail: string,
@@ -33,14 +39,19 @@ export class OrdersController {
     return this.ordersService.getByEmail(clientEmail);
   }
 
-  @Get('technician/:technId')
-  async getByTechnId(@Param('technId') technId: string): Promise<Order[]> {
-    return this.ordersService.getByTechnId(technId);
+
+  @Get ('technician/:technId')
+  async getByTechnId (@Param ('technId') technId: string): Promise<Order []> {
+    return this.ordersService.getByTechnId (technId);
   }
 
-  @Get('status/:status')
-  async getByStatus(@Param('status') status: OrderStatus): Promise<Order[]> {
-    return this.ordersService.getByStatus(status);
+  @Get ('status/:status')
+
+  async getByStatus (@Param ('status') status: OrderStatus): Promise<Order []> {
+
+    return this.ordersService.getByStatus (status);
+
+
   }
 
   @Get(':id')
@@ -58,10 +69,9 @@ export class OrdersController {
     @Param('id') orderId: string,
     @Body() updateOrderDto: UpdateOrderDto,
   ): Promise<Order> {
-    const updatedOrder = await this.ordersService.update(
-      orderId,
-      updateOrderDto,
-    );
+
+    const updatedOrder = await this.ordersService.update (orderId, updateOrderDto);
+
 
     if (updateOrderDto.status) {
       let eventMessage = '';
@@ -79,7 +89,10 @@ export class OrdersController {
         await this.orderHistoriesService.create({
           orderId,
           event: eventMessage,
-          dateTime: new Date(),
+
+          dateTime: new Date (),
+
+
         });
       }
     }
@@ -87,8 +100,12 @@ export class OrdersController {
     return updatedOrder;
   }
 
-  @Delete(':id')
-  async delete(@Param('id') orderId: string): Promise<void> {
-    await this.ordersService.inactiveDelete(orderId);
+
+  @Delete (':id')
+  async delete (@Param ('id') orderId: string): Promise<void> {
+
+    await this.ordersService.inactiveDelete (orderId);
+
+
   }
 }
