@@ -14,6 +14,6 @@ export class CreateOrderHistoriesDto {
 
   @IsDate ()
   @IsNotEmpty ()
-  readonly dateTime: Date;
+  readonly createdAt: Date;
 
 }

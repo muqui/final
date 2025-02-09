@@ -8,6 +8,10 @@ export class UpdateOrderDto extends PartialType(CreateOrderDto) {
   @IsEnum(OrderStatus)
   status?: OrderStatus;
 
+  @IsOptional ()
+  @IsBoolean ()
+  isActive?: boolean;
+
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
@@ -15,4 +19,5 @@ export class UpdateOrderDto extends PartialType(CreateOrderDto) {
   @IsOptional()
   @IsString()
   assignedTechnicianId?: string;
+
 }
