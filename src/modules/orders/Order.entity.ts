@@ -57,6 +57,9 @@ export class Order {
     default: OrderStatus.STARTED,
   })
   status: OrderStatus;
+
+  @Column({ type: 'boolean', default: true })
+  isActive: boolean;
  
   @ManyToOne (() => User, (user) => user.order, { eager: true })
   @JoinColumn({ name: 'userId' })

@@ -1,12 +1,8 @@
-import {
-  Controller,
-  Patch,
-  Param,
-  Body,
-  Get,
-  Post,
-  Delete,
-} from '@nestjs/common';
+
+
+
+import { Controller, Patch, Param, Body, Get, Post, Delete, Put } from '@nestjs/common';
+
 import { OrdersService } from '../orders/orders.service';
 import { CreateOrderDto } from '../../dto/orders/createOrder.dto';
 import { OrderHistoriesService } from '../orderHistories/orderHistories.service';
@@ -21,28 +17,29 @@ export class OrdersController {
     private readonly orderHistoriesService: OrderHistoriesService,
   ) {}
 
-  @Get()
-  async getAll(): Promise<Order[]> {
-    return this.ordersService.getAll();
+
+  @Get ()
+
+  async getAllOrders (): Promise<Order []> {
+
+    return this.ordersService.getAllOrders ();
+
+
   }
 
   
   @Get ('email/:clientEmail')
 
-  async getByEmail (@Param ('clientEmail') clientEmail: string): Promise<Order []> {
+  async getOrdersByClientEmail (@Param ('clientEmail') clientEmail: string): Promise<Order []> {
 
+    return this.ordersService.getOrdersByClientEmail (clientEmail);
 
-  @Get('email/:clientEmail')
-  async getByEmail(
-    @Param('clientEmail') clientEmail: string,
-  ): Promise<Order[]> {
-    return this.ordersService.getByEmail(clientEmail);
   }
 
 
   @Get ('technician/:technId')
-  async getByTechnId (@Param ('technId') technId: string): Promise<Order []> {
-    return this.ordersService.getByTechnId (technId);
+  async getOrdersByTechnId (@Param ('technId') technId: string): Promise<Order []> {
+    return this.ordersService.getOrdersByTechnId (technId);
   }
 
   @Get ('status/:status')
@@ -51,12 +48,14 @@ export class OrdersController {
 
     return this.ordersService.getByStatus (status);
 
-
   }
 
-  @Get(':id')
-  async getById(@Param('id') orderId: string): Promise<Order> {
-    return this.ordersService.getById(orderId);
+  @Get (':id')
+
+  async getOrderById (@Param ('id') orderId: string): Promise<Order> {
+
+    return this.ordersService.getOrderById (orderId);
+
   }
 
   @Post()
@@ -90,7 +89,7 @@ export class OrdersController {
           orderId,
           event: eventMessage,
 
-          dateTime: new Date (),
+          createdAt: new Date (),
 
 
         });
@@ -100,12 +99,13 @@ export class OrdersController {
     return updatedOrder;
   }
 
+@Put('inactivate/:id')
+async inactivedelete(
+@Param('id') orderId: string,
+@Body() updateOrderDto: UpdateOrderDto
+): Promise<{ message: string }> {
+  return this.ordersService.inactiveDelete(orderId, updateOrderDto);
+}
 
-  @Delete (':id')
-  async delete (@Param ('id') orderId: string): Promise<void> {
-
-    await this.ordersService.inactiveDelete (orderId);
-
-
-  }
+  
 }
