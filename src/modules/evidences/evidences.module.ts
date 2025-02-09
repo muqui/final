@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { EvidencesController } from './evidences.controller';
@@ -7,9 +7,13 @@ import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { CloudinaryConfig } from 'src/Config/cloudinary';
 import { Order } from '../orders/Order.entity';
 import { Evidence } from './Evidence.entity';
+import { OrdersModule } from '../orders/orders.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Evidence, Order])],
+  imports: [TypeOrmModule.forFeature([Evidence, Order]),
+  forwardRef(() => OrdersModule), 
+
+],
   controllers: [EvidencesController],
   providers: [EvidencesService, CloudinaryService, CloudinaryConfig],
 })

@@ -23,4 +23,17 @@ export class CloudinaryService{
             toStream(file.buffer).pipe(upload)
         })
     }
+
+    async deleteImage(publicId: string): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            v2.uploader.destroy(publicId, (error, result) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(result.result === "ok");
+                }
+            });
+        });
+    }
+    
 }
