@@ -1,6 +1,6 @@
 
 
-import { Controller, Patch, Param, Body, Get, Post, Delete } from '@nestjs/common';
+import { Controller, Patch, Param, Body, Get, Post, Delete, Put } from '@nestjs/common';
 import { OrdersService } from '../orders/orders.service';
 import { CreateOrderDto } from '../../dto/orders/createOrder.dto';
 import { OrderHistoriesService } from '../orderHistories/orderHistories.service';
@@ -21,23 +21,23 @@ export class OrdersController {
 
   @Get ()
 
-  async getAll (): Promise<Order []> {
+  async getAllOrders (): Promise<Order []> {
 
-    return this.ordersService.getAll ();
+    return this.ordersService.getAllOrders ();
 
   }
   
   @Get ('email/:clientEmail')
 
-  async getByEmail (@Param ('clientEmail') clientEmail: string): Promise<Order []> {
+  async getOrdersByClientEmail (@Param ('clientEmail') clientEmail: string): Promise<Order []> {
 
-    return this.ordersService.getByEmail(clientEmail);
+    return this.ordersService.getOrdersByClientEmail (clientEmail);
 
   }
 
   @Get ('technician/:technId')
-  async getByTechnId (@Param ('technId') technId: string): Promise<Order []> {
-    return this.ordersService.getByTechnId (technId);
+  async getOrdersByTechnId (@Param ('technId') technId: string): Promise<Order []> {
+    return this.ordersService.getOrdersByTechnId (technId);
   }
 
   @Get ('status/:status')
@@ -50,9 +50,9 @@ export class OrdersController {
 
   @Get (':id')
 
-  async getById (@Param ('id') orderId: string): Promise<Order> {
+  async getOrderById (@Param ('id') orderId: string): Promise<Order> {
 
-    return this.ordersService.getById (orderId);
+    return this.ordersService.getOrderById (orderId);
 
   }
 
@@ -94,7 +94,7 @@ export class OrdersController {
 
           orderId,
           event: eventMessage,
-          dateTime: new Date (),
+          createdAt: new Date (),
 
         });
 
@@ -105,12 +105,14 @@ export class OrdersController {
     return updatedOrder;
   }
 
-  @Delete (':id')
-  async delete (@Param ('id') orderId: string): Promise<void> {
+@Put('inactivate/:id')
+async inactivedelete(
+@Param('id') orderId: string,
+@Body() updateOrderDto: UpdateOrderDto
+): Promise<{ message: string }> {
+  return this.ordersService.inactiveDelete(orderId, updateOrderDto);
+}
 
-    await this.ordersService.inactiveDelete (orderId);
-
-  }
   
 }
 

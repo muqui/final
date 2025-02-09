@@ -1,28 +1,37 @@
 
 
 import {
+
   Entity,
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
   JoinColumn,
+
 } from 'typeorm';
+
+import { v7 as uuid } from 'uuid';
 import { Order } from '../orders/Order.entity';
 
+@Entity ('orderhistories')
 
-@Entity('orderhistories')
 export class OrderHistory {
-  @PrimaryGeneratedColumn()
-  id: number;
 
-  @Column({ type: 'varchar', length: 255 })
+  @PrimaryGeneratedColumn('uuid')
+  id: string = uuid ();
+
+
+  @Column ({ type: 'varchar', length: 255 })
   event: string;
 
-  @Column({ type: 'date', default: () => 'CURRENT_TIMESTAMP', nullable: false })
-  dateTime: Date;
+  @Column ({ type: 'timestamp', precision: 0, nullable: false })
+  createdAt: Date;
 
-  @ManyToOne(() => Order, (order) => order.orderHistories, { eager: true })
-  @JoinColumn({ name: 'order_id' })
+  @ManyToOne ( () => Order, (order) => order.orderHistories, { eager: true })
+  @JoinColumn ({ name: 'order_id' })
   order: Order;
-  
+
 }
+
+
+

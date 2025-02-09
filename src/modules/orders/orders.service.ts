@@ -1,6 +1,6 @@
 
 
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { OrdersRepository } from './orders.repository';  // Importamos el repositorio
 import { CreateOrderDto } from '../../dto/orders/createOrder.dto';
 import { Order } from './Order.entity';
@@ -19,21 +19,21 @@ export class OrdersService {
 
   }
 
-  async getAll (): Promise<Order []> {
+  async getAllOrders (): Promise<Order []> {
 
-    return this.ordersRepository.getAll ();    
+    return this.ordersRepository.getAllOrders ();    
 
   }
 
-  async getByEmail (clientEmail: string): Promise<Order []> {
+  async getOrdersByClientEmail (clientEmail: string): Promise<Order []> {
 
-    return this.ordersRepository.getByEmail (clientEmail);
+    return this.ordersRepository.getOrdersByClientEmail (clientEmail);
 
   }
   
-  async getByTechnId (technId: string): Promise<Order []> {
+  async getOrdersByTechnId (technId: string): Promise<Order []> {
 
-    return this.ordersRepository.getByTechnId (technId);
+    return this.ordersRepository.getOrdersByTechnId (technId);
 
   }    
 
@@ -43,26 +43,32 @@ export class OrdersService {
 
   }
 
-  async getById (id: string): Promise<Order> {
+  async getOrderById (id: string): Promise<Order> {
 
-    return this.ordersRepository.getById (id);
+    return this.ordersRepository.getOrderById (id);
 
   }
   
   async update (id: string, updateOrderDto: UpdateOrderDto): Promise<Order> {
 
     await this.ordersRepository.update (id, updateOrderDto);
-    return this.getById(id);
+    return this.ordersRepository.getOrderById(id);
 
   }
 
-  async inactiveDelete (id: string): Promise<void> {
-
-    return this.ordersRepository.inactiveDelete (id);
-
-  }  
-
+      async inactiveDelete(id: string, { isActive }: UpdateOrderDto): Promise<{ message: string }> {
+      const order = await this.ordersRepository.findOrderById(id);
+      if (!order) throw new NotFoundException(`Orden con ID ${id} no encontrada.`);
+      if (!isActive && !order.isActive) throw new BadRequestException(`La orden ya está inactiva.`);
+    
+      await this.ordersRepository.update(id, { isActive });
+    
+      return { message: `Orden con ID ${id} ha sido ${isActive ? 'activada' : 'inactivada'} correctamente` };
+    }
+    
+  
 }
+
 
 
   

@@ -1,12 +1,13 @@
 
 
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order } from './Order.entity';
 import { OrderStatus } from 'src/enum/orderstatus.enum';
 import { CreateOrderDto } from 'src/dto/orders/createOrder.dto';
 import { UpdateOrderDto } from 'src/dto/orders/updateOrder.dto';
+import { UpdateResult } from 'typeorm';
 
 
 @Injectable ()
@@ -27,19 +28,19 @@ export class OrdersRepository {
 
   }
 
-  async getAll (): Promise<Order []> {
+  async getAllOrders (): Promise<Order []> {
 
     return this.ordersRepository.find ();
 
   }
 
-  async getByEmail (clientEmail: string): Promise<Order[]> {
+  async getOrdersByClientEmail (clientEmail: string): Promise<Order []> {
 
-    return this.ordersRepository.find({ where: { clientEmail } });
+    return this.ordersRepository.find ({ where: { clientEmail } });
 
   }
 
-  async getByTechnId (assignedTechnicianId: string): Promise<Order []> {
+  async getOrdersByTechnId (assignedTechnicianId: string): Promise<Order []> {
 
     return this.ordersRepository.find ({
 
@@ -57,35 +58,41 @@ export class OrdersRepository {
 
   }   
 
-  async getById (id: string): Promise<Order | null> {
+  async getOrderById (id: string): Promise<Order | null> {
 
     return this.ordersRepository.findOne ({ where: { id } });
 
   }  
  
-  async update (id: string, updateData: UpdateOrderDto): Promise<Order | null> {
-    const order = await this.getById (id);
+ 
+    async update(id: string, updateData: UpdateOrderDto): Promise<Order | null> {
+      const order = await this.getOrderById(id);
+      if (!order) return null;  
     
-    if (!order) {
-      return null; 
-    }  
-  
-  if (updateData.status && Object.values (OrderStatus).includes (updateData.status)) {
-      order.status = updateData.status;
-      return this.ordersRepository.save (order);
+      const updatedOrder = { ...order, ...updateData };
+      return this.ordersRepository.save(updatedOrder);
     }
+    
+    
+
+  async findOrderById (id: string): Promise<Order | null> {
+
+    return this.ordersRepository.findOne ({ where: { id } });
+    
+  }
+
+  /* Este endpoint será utilizado para cambiar el estado de la order de "Activa" a "Inactiva".*/
   
-    return order;
-  }    
-
-  /* Este endpoint será editado para cambiar el estado de la order de "Activa" a "Inactiva".*/
-    async inactiveDelete (id: string): Promise<void> {
-
-    await this.ordersRepository.delete (id);
-
+  async inactiveDelete(id: string, isActive: boolean): Promise<Order> {
+    await this.update(id, { isActive });
+    return this.findOrderById(id);
   }
   
+     
+
 }
+  
+
 
 
 
