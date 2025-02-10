@@ -24,7 +24,7 @@ export class EvidencesService {
       throw new BadRequestException(`El Order ID (${createEvidenceDto.orderId}) no es un UUID válido.`);
     }
     // Buscar la orden en la base de datos
-    const order = await this.ordersService.getById(createEvidenceDto.orderId)
+    const order = await this.ordersService.getOrderById(createEvidenceDto.orderId)
 
     if (!order) {
       throw new NotFoundException(` Nose encontro la order: ${createEvidenceDto.orderId} .`);

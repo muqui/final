@@ -1,34 +1,36 @@
 
 
-
-import { Controller, Patch, Param, Body, Get, Post, Delete, Put } from '@nestjs/common';
-
+import { Controller, Patch, Param, Body, Get, Post, Put } from '@nestjs/common';
 import { OrdersService } from '../orders/orders.service';
 import { CreateOrderDto } from '../../dto/orders/createOrder.dto';
 import { OrderHistoriesService } from '../orderHistories/orderHistories.service';
 import { Order } from './Order.entity';
 import { UpdateOrderDto } from '../../dto/orders/updateOrder.dto';
 import { OrderStatus } from '../../enum/orderstatus.enum';
+import { UpdateTechicalDataDto } from 'src/dto/orders/updateTechData.dto';
+import { UpdateStatusDto } from 'src/dto/orders/updateTechStatus.dto';
 
-@Controller('orders')
+@Controller ('orders')
+
 export class OrdersController {
-  constructor(
+
+  constructor (
+
     private readonly ordersService: OrdersService,
     private readonly orderHistoriesService: OrderHistoriesService,
+
   ) {}
 
-
-  @Get ()
+  /* Este Endpoint es de uso exclusivo del/los Administrador(es).*/
+  @Get () // Endpoint verificado!
 
   async getAllOrders (): Promise<Order []> {
 
     return this.ordersService.getAllOrders ();
 
-
   }
-
   
-  @Get ('email/:clientEmail')
+  @Get ('email/:clientEmail') // Endpoint verificado!
 
   async getOrdersByClientEmail (@Param ('clientEmail') clientEmail: string): Promise<Order []> {
 
@@ -36,21 +38,23 @@ export class OrdersController {
 
   }
 
+  @Get ('technician/:technId') // Endpoint verificado!
 
-  @Get ('technician/:technId')
   async getOrdersByTechnId (@Param ('technId') technId: string): Promise<Order []> {
+
     return this.ordersService.getOrdersByTechnId (technId);
+
   }
 
-  @Get ('status/:status')
+  /*@Get ('status/:status')
 
   async getByStatus (@Param ('status') status: OrderStatus): Promise<Order []> {
 
     return this.ordersService.getByStatus (status);
 
-  }
+  }*/
 
-  @Get (':id')
+  @Get (':id') // Endpoint verificado!
 
   async getOrderById (@Param ('id') orderId: string): Promise<Order> {
 
@@ -58,54 +62,54 @@ export class OrdersController {
 
   }
 
-  @Post()
-  async create(@Body() createOrderDto: CreateOrderDto): Promise<Order> {
-    return this.ordersService.create(createOrderDto);
-  }
+  @Post ()
 
-  @Patch(':id')
-  async update(
-    @Param('id') orderId: string,
-    @Body() updateOrderDto: UpdateOrderDto,
+  /*async createOrder (@Body () createOrderDto: CreateOrderDto): Promise<Order> {
+
+    return this.ordersService.createOrder (createOrderDto);
+
+  }*/
+
+  @Patch ('technicaldata/:id') // Endpoint verificado!
+
+  async updateTechnicalData (
+
+    @Param ('id') orderId: string,
+    @Body () updateTechnicalDataDto: UpdateTechicalDataDto
+
   ): Promise<Order> {
 
-    const updatedOrder = await this.ordersService.update (orderId, updateOrderDto);
+    return this.ordersService.updateTechnicalData (orderId, updateTechnicalDataDto);
 
-
-    if (updateOrderDto.status) {
-      let eventMessage = '';
-
-      switch (updateOrderDto.status) {
-        case OrderStatus.STARTED:
-          eventMessage = 'Servicio iniciado';
-          break;
-        case OrderStatus.COMPLETED:
-          eventMessage = 'Servicio finalizado';
-          break;
-      }
-
-      if (eventMessage) {
-        await this.orderHistoriesService.create({
-          orderId,
-          event: eventMessage,
-
-          createdAt: new Date (),
-
-
-        });
-      }
-    }
-
-    return updatedOrder;
   }
 
-@Put('inactivate/:id')
-async inactivedelete(
-@Param('id') orderId: string,
-@Body() updateOrderDto: UpdateOrderDto
-): Promise<{ message: string }> {
-  return this.ordersService.inactiveDelete(orderId, updateOrderDto);
-}
+  @Patch (':id/status') // Endpoint verificado!
 
-  
-}
+  async updateOrderStatus (
+
+    @Param ('id') orderId: string,
+    @Body() updateStatusDto: UpdateStatusDto
+
+  ): Promise<Order> {
+
+    return this.ordersService.updateOrderStatus(orderId, updateStatusDto);
+
+  }
+
+  /* Este Endpoint es de uso exclusivo del/los Administrador(es).*/
+  /* Falso Delete*/
+  @Put ('inactivate/:id')
+
+  async inactivedelete ( 
+
+    @Param ('id') orderId: string,
+    @Body () updateOrderDto: UpdateOrderDto
+
+  ): Promise<{ message: string }> {
+
+  return this.ordersService.inactiveDelete (orderId, updateOrderDto);
+
+  }
+
+} 
+

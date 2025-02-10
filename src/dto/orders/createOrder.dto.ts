@@ -30,7 +30,7 @@ export class CreateOrderDto {
   @IsString()
   description: string;
 
-  @IsString()
+  /*@IsString()
   @IsNotEmpty()
-  status: OrderStatus;
+  status: OrderStatus;*/
 }
