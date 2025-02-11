@@ -8,7 +8,7 @@ import { GoogleStrategy } from './google.stratergy';
 
 @Module({
   imports: [
-    PassportModule.register({ defaultStrategy: 'jwt' }),
+    PassportModule.register({ defaultStrategy: 'google' }),
     TypeOrmModule.forFeature([User]),
   ],
   controllers: [AuthController],
