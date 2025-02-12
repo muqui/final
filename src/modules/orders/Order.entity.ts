@@ -35,8 +35,8 @@ export class Order {
     type: 'enum',
     enum: EquipmentType,
     nullable: false,
-    default: EquipmentType.CELULAR,
-    update: false,
+    /*default: EquipmentType.CELULAR,*/
+    update: true,
   })
   equipmentType: EquipmentType;
 
@@ -54,9 +54,12 @@ export class Order {
     type: 'enum',
     enum: OrderStatus,
     nullable: false,
-    default: OrderStatus.STARTED,
+    /*default: OrderStatus.STARTED,*/
   })
   status: OrderStatus;
+
+  @Column({ type: 'boolean', default: true })
+  isActive: boolean;
  
   @ManyToOne (() => User, (user) => user.order, { eager: true })
   @JoinColumn({ name: 'userId' })
@@ -74,4 +77,6 @@ export class Order {
   @OneToOne(() => Payment, (payment) => payment.order)
   payment: Payment;
 
+  @Column({ type: 'jsonb', default: [] })
+  statusHistory: { [key: string]: string }[];
 }

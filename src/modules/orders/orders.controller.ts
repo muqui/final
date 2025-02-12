@@ -1,106 +1,118 @@
-import {
-  Controller,
-  Patch,
-  Param,
-  Body,
-  Get,
-  Post,
-  Delete,
-} from '@nestjs/common';
+
+
+import { Controller, Patch, Param, Body, Get, Post, Put } from '@nestjs/common';
 import { OrdersService } from '../orders/orders.service';
 import { CreateOrderDto } from '../../dto/orders/createOrder.dto';
 import { OrderHistoriesService } from '../orderHistories/orderHistories.service';
 import { Order } from './Order.entity';
 import { UpdateOrderDto } from '../../dto/orders/updateOrder.dto';
 import { OrderStatus } from '../../enum/orderstatus.enum';
+import { UpdateTechicalDataDto } from 'src/dto/orders/updateTechData.dto';
+import { UpdateStatusDto } from 'src/dto/orders/updateTechStatus.dto';
 
-@Controller('orders')
+@Controller ('orders')
+
 export class OrdersController {
-  constructor(
+
+  constructor (
+
     private readonly ordersService: OrdersService,
     private readonly orderHistoriesService: OrderHistoriesService,
+
   ) {}
 
-  @Get()
-  async getAll(): Promise<Order[]> {
-    return this.ordersService.getAll();
+  /* Este Endpoint es de uso exclusivo del/los Administrador(es).*/
+  @Get () // Endpoint verificado!
+
+<<<<<<< HEAD
+=======
+  async getAllOrders (): Promise<Order []> {
+
+    return this.ordersService.getAllOrders ();
+
+  }
+  
+  @Get ('email/:clientEmail') // Endpoint verificado!
+
+  async getOrdersByClientEmail (@Param ('clientEmail') clientEmail: string): Promise<Order []> {
+
+    return this.ordersService.getOrdersByClientEmail (clientEmail);
+>>>>>>> main
+
   }
 
+  @Get ('technician/:technId') // Endpoint verificado!
 
-  @Get('email/:clientEmail')
-  async getByEmail(
-    @Param('clientEmail') clientEmail: string,
-  ): Promise<Order[]> {
-    return this.ordersService.getByEmail(clientEmail);
+  async getOrdersByTechnId (@Param ('technId') technId: string): Promise<Order []> {
+
+    return this.ordersService.getOrdersByTechnId (technId);
+
   }
 
-
-  @Get ('technician/:technId')
-  async getByTechnId (@Param ('technId') technId: string): Promise<Order []> {
-    return this.ordersService.getByTechnId (technId);
-  }
-
-  @Get ('status/:status')
+  /*@Get ('status/:status')
 
   async getByStatus (@Param ('status') status: OrderStatus): Promise<Order []> {
 
     return this.ordersService.getByStatus (status);
 
+  }*/
+
+  @Get (':id') // Endpoint verificado!
+
+  async getOrderById (@Param ('id') orderId: string): Promise<Order> {
+
+    return this.ordersService.getOrderById (orderId);
 
   }
 
-  @Get(':id')
-  async getById(@Param('id') orderId: string): Promise<Order> {
-    return this.ordersService.getById(orderId);
-  }
+  @Post ()
 
-  @Post()
-  async create(@Body() createOrderDto: CreateOrderDto): Promise<Order> {
-    return this.ordersService.create(createOrderDto);
-  }
+  /*async createOrder (@Body () createOrderDto: CreateOrderDto): Promise<Order> {
 
-  @Patch(':id')
-  async update(
-    @Param('id') orderId: string,
-    @Body() updateOrderDto: UpdateOrderDto,
+    return this.ordersService.createOrder (createOrderDto);
+
+  }*/
+
+  @Patch ('technicaldata/:id') // Endpoint verificado!
+
+  async updateTechnicalData (
+
+    @Param ('id') orderId: string,
+    @Body () updateTechnicalDataDto: UpdateTechicalDataDto
+
   ): Promise<Order> {
 
-    const updatedOrder = await this.ordersService.update (orderId, updateOrderDto);
-
-
-    if (updateOrderDto.status) {
-      let eventMessage = '';
-
-      switch (updateOrderDto.status) {
-        case OrderStatus.STARTED:
-          eventMessage = 'Servicio iniciado';
-          break;
-        case OrderStatus.COMPLETED:
-          eventMessage = 'Servicio finalizado';
-          break;
-      }
-
-      if (eventMessage) {
-        await this.orderHistoriesService.create({
-          orderId,
-          event: eventMessage,
-
-          dateTime: new Date (),
-
-
-        });
-      }
-    }
-
-    return updatedOrder;
-  }
-
-
-  @Delete (':id')
-  async delete (@Param ('id') orderId: string): Promise<void> {
-
-    await this.ordersService.inactiveDelete (orderId);
-
+    return this.ordersService.updateTechnicalData (orderId, updateTechnicalDataDto);
 
   }
-}
+
+  @Patch (':id/status') // Endpoint verificado!
+
+  async updateOrderStatus (
+
+    @Param ('id') orderId: string,
+    @Body() updateStatusDto: UpdateStatusDto
+
+  ): Promise<Order> {
+
+    return this.ordersService.updateOrderStatus(orderId, updateStatusDto);
+
+  }
+
+  /* Este Endpoint es de uso exclusivo del/los Administrador(es).*/
+  /* Falso Delete*/
+  @Put ('inactivate/:id')
+
+  async inactivedelete ( 
+
+    @Param ('id') orderId: string,
+    @Body () updateOrderDto: UpdateOrderDto
+
+  ): Promise<{ message: string }> {
+
+  return this.ordersService.inactiveDelete (orderId, updateOrderDto);
+
+  }
+
+} 
+
