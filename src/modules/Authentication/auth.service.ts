@@ -78,6 +78,7 @@ export class AuthService {
 
     const userFound = await this.user.findOne({
       where: { email: loginCreds.email },
+      relations: { orders: true },
     });
 
     if (!userFound) {
@@ -102,6 +103,7 @@ export class AuthService {
     return {
       login: true,
       token,
+      userFound,
     };
   }
 }

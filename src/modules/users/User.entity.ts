@@ -55,5 +55,5 @@ export class User {
   createdAt: Date;
 
   @OneToMany(() => Order, (orders) => orders.user)
-  order: Order[];
+  orders: Order[];
 }

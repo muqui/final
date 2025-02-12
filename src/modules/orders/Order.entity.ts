@@ -61,7 +61,7 @@ export class Order {
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
  
-  @ManyToOne (() => User, (user) => user.order, { eager: true })
+  @ManyToOne (() => User, (user) => user.orders, { eager: true })
   @JoinColumn({ name: 'userId' })
   user: User;
 
