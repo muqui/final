@@ -18,7 +18,7 @@ const database = {
   migrations: ['dist/migrations/*{.ts,.js}'],
   autoLoadEntities: true,
   logging: true,
-    // dropSchema: true
+  // dropSchema: true,
 };
 
 export default registerAs('typeorm', () => database);
