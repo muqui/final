@@ -40,6 +40,14 @@ export class AuthService {
       );
     }
 
+    const alreadyExistDni = await this.user.findOne({
+      where: { dni: registerCreds.dni },
+    });
+
+    if (alreadyExistDni) {
+      throw new BadRequestException('El DNI ya existe. Ingresa uno nuevo');
+    }
+
     const hashedPassword = await bcrypt.hash(registerCreds.password, 10);
 
     const newUser = this.user.create({

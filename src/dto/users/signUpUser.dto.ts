@@ -1,4 +1,13 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  Length,
+  Max,
+  Min,
+  MinLength,
+} from 'class-validator';
 
 export class SignUpUserDto {
   @MinLength(3, { message: 'El nombre debe ser de minimo 3 caracteres' })
@@ -20,4 +29,10 @@ export class SignUpUserDto {
   @IsNotEmpty({ message: 'Por favor ingresa un telefono alternativo' })
   @IsString()
   phone: string;
+
+  @IsNotEmpty({ message: 'El campo DNI es Obligatorio' })
+  @IsNumber()
+  @Min(10000000)
+  @Max(99999999)
+  dni: number;
 }
