@@ -6,7 +6,6 @@ import { CreateOrderDto } from '../../dto/orders/createOrder.dto';
 import { OrderHistoriesService } from '../orderHistories/orderHistories.service';
 import { Order } from './Order.entity';
 import { UpdateOrderDto } from '../../dto/orders/updateOrder.dto';
-import { OrderStatus } from '../../enum/orderstatus.enum';
 import { UpdateTechicalDataDto } from 'src/dto/orders/updateTechData.dto';
 import { UpdateStatusDto } from 'src/dto/orders/updateTechStatus.dto';
 
@@ -62,13 +61,13 @@ export class OrdersController {
 
   }
 
-  @Post ()
+  @Post ('create')
 
-  /*async createOrder (@Body () createOrderDto: CreateOrderDto): Promise<Order> {
+  async createOrder (@Body () createOrderDto: CreateOrderDto): Promise<Order> {
 
     return this.ordersService.createOrder (createOrderDto);
 
-  }*/
+  }
 
   @Patch ('technicaldata/:id') // Endpoint verificado!
 
@@ -112,4 +111,3 @@ export class OrdersController {
   }
 
 } 
-

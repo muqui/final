@@ -1,36 +1,23 @@
+
 import {
-  IsEmail,
-  IsEnum,
+
   IsNotEmpty,
-  IsOptional,
-  IsString,
+  IsUUID,
+
 } from 'class-validator';
-import { EquipmentType } from '../../enum/equipmentype.enum';
-import { OrderStatus } from '../../enum/orderstatus.enum';
 
-export class CreateOrderDto {
-  @IsNotEmpty()
-  @IsEmail()
-  clientEmail: string;
+export class CreateOrderDto {  
+  
+  @IsNotEmpty ()  
+  @IsUUID ()  
+  clientId?: string;  
+  
+  @IsNotEmpty ()  
+  @IsUUID ()  
+  assignedTechnicianId?: string;  
 
-  @IsNotEmpty()
-  clientDni: number;
+  @IsNotEmpty ()  
+  @IsUUID ()  
+  userId: string;
 
-  @IsEnum(EquipmentType)
-  equipmentType: EquipmentType;
-
-  @IsString()
-  @IsNotEmpty()
-  imei: string;
-
-  @IsOptional()
-  assignedTechnicianId?: string;
-
-  @IsNotEmpty()
-  @IsString()
-  description: string;
-
-  /*@IsString()
-  @IsNotEmpty()
-  status: OrderStatus;*/
 }

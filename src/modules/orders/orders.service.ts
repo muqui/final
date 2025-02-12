@@ -8,6 +8,10 @@ import { Order } from './Order.entity';
 import { UpdateOrderDto } from 'src/dto/orders/updateOrder.dto';
 import { UpdateStatusDto } from '../../dto/orders/updateTechStatus.dto';
 import { UpdateTechicalDataDto } from 'src/dto/orders/updateTechData.dto';
+import { EquipmentType } from 'src/enum/equipmentype.enum';
+import { OrderStatus } from 'src/enum/orderstatus.enum';
+import { User } from '../users/User.entity';
+import { Role } from 'src/enum/Role.enum';
 
 @Injectable ()
 
@@ -49,14 +53,70 @@ export class OrdersService {
     return this.ordersRepository.getOrderById (id);
 
   }
+    
+  async createOrder (createOrderDto: CreateOrderDto): Promise<Order> {
 
- /*async createOrder (createOrderDto: CreateOrderDto): Promise<Order> {
+    const { assignedTechnicianId, userId, clientId } = createOrderDto;             
+     
+        const client = await this.usersRepository.findByRole(clientId, Role.CLIENT);
+        if (!client) {
+          throw new NotFoundException('Cliente no encontrado.');
+        }
+        
+        const assignedTechnician = await this.usersRepository.findByRole(assignedTechnicianId, Role.TECHN);
+        if (!assignedTechnician) {
+          throw new NotFoundException('Técnico no encontrado.');
+        }
+        
+        const admin = await this.usersRepository.findByRole(userId, Role.ADMIN);
+        if (!admin) {
+          throw new NotFoundException('El usuario que crea la orden debe ser un administrador.');
+        }
+          
 
-    return this.ordersRepository.createOrder (createOrderDto);
+    const defaultUser: User = {
 
-  }*/
+      id: "N/A",
+      name: "No asignado",
+      email: "no-asignado@example.com",
+      dni: 99999999,
+      password: "default",
+      phone: "000000000",
+      role: "unknown",
+      createdAt: new Date (),
+      order: [], 
 
-  async updateTechnicalData (id: string, updateTechnicalDataDto: UpdateTechicalDataDto): Promise<Order> {
+    };
+
+    const validateOrderDto: CreateOrderDto = {
+
+      userId: admin?.id ?? "N/A", 
+      assignedTechnicianId: assignedTechnician?.id ?? "N/A", 
+      clientId: client?.id ?? "N/A", 
+
+    };
+
+    const orderData: Partial<Order> = {
+
+      clientEmail: client?.email ?? "No asignado", 
+      clientDni: client?.dni ?? 99999999, 
+      assignedTechnician: assignedTechnician ?? defaultUser, 
+      user: admin ?? defaultUser, 
+      equipmentType: EquipmentType.EQUIPO, 
+      imei: "000000000000000", 
+      description: "[Editar ...]", 
+      status: OrderStatus.ACTUALIZAR, 
+      isActive: true, 
+      statusHistory: [], 
+
+    };
+        
+    const newOrder = await this.ordersRepository.createOrder(orderData);
+    return await this.ordersRepository.saveOrder1(newOrder);
+
+    }          
+
+    async updateTechnicalData (id: string, updateTechnicalDataDto: UpdateTechicalDataDto): Promise<Order> {
 
     const order = await this.ordersRepository.getOrderById (id);
     if (!order) throw new NotFoundException (`Orden con ID ${id} no encontrada`);
@@ -127,7 +187,6 @@ export class OrdersService {
   }
   
 }
-
 
 
 

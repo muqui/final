@@ -34,6 +34,12 @@ export class User {
   phone: string;
 
   @Column({
+    nullable: false,
+    type: 'int',
+    default: 99999999,
+  })
+  dni: number;
+  @Column({
     type: 'enum',
     enum: Role,
     default: Role.CLIENT,
@@ -49,3 +55,4 @@ export class User {
   @OneToMany(() => Order, (orders) => orders.user)
   order: Order[];
 }
+
