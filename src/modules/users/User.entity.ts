@@ -37,9 +37,11 @@ export class User {
     nullable: false,
     type: 'int',
     default: 99999999,
+
     unique: true,
   })
   dni: number;
+
 
   @Column({
     type: 'enum',
@@ -57,3 +59,4 @@ export class User {
   @OneToMany(() => Order, (orders) => orders.user)
   orders: Order[];
 }
+
