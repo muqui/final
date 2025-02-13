@@ -24,8 +24,6 @@ export class OrdersController {
   /* Este Endpoint es de uso exclusivo del/los Administrador(es).*/
   @Get () // Endpoint verificado!
 
-<<<<<<< HEAD
-=======
   async getAllOrders (): Promise<Order []> {
 
     return this.ordersService.getAllOrders ();
@@ -37,7 +35,7 @@ export class OrdersController {
   async getOrdersByClientEmail (@Param ('clientEmail') clientEmail: string): Promise<Order []> {
 
     return this.ordersService.getOrdersByClientEmail (clientEmail);
->>>>>>> main
+
 
   }
 

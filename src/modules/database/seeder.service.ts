@@ -64,41 +64,41 @@ export class SeedService {
     this.clearDatabase();
     console.log('🌱 Iniciando precarga de datos...');
 
-    const hashedPassword = await bcrypt.hash('Num12345678', 10);
+    const hashedPassword = await bcrypt.hash('0123456789', 10);
 
     // Crear usuarios con diferentes roles
     const users = [
       this.userRepository.create({
         name: 'Admin',
-        email: 'admin@hotmail.com',
+        email: 'admin@example.com',
         password: hashedPassword,
         phone: '1234567890',
         role: Role.ADMIN,
       }),
       this.userRepository.create({
         name: 'Cliente1',
-        email: 'cliente1@hotmail.com',
+        email: 'cliente1@example.com',
         password: hashedPassword,
         phone: '1234567891',
         role: Role.CLIENT,
       }),
       this.userRepository.create({
         name: 'Cliente2',
-        email: 'cliente2@hotmail.com',
+        email: 'cliente2@example.com',
         password: hashedPassword,
         phone: '1234567892',
         role: Role.CLIENT,
       }),
       this.userRepository.create({
         name: 'Técnico',
-        email: 'tecnico@hotmail.com',
+        email: 'tecnico@example.com',
         password: hashedPassword,
         phone: '1234567893',
         role: Role.TECHN,
       }),
       this.userRepository.create({
-        name: 'Técnico',
-        email: 'tecnico1@hotmail.com',
+        name: 'Técnico1',
+        email: 'tecnico1@example.com',
         password: hashedPassword,
         phone: '1234567893',
         role: Role.TECHN,
@@ -106,7 +106,7 @@ export class SeedService {
     ];
 
     const savedUsers = await this.userRepository.save(users);
-    console.log(`✅ Se crearon ${savedUsers.length} usuarios`);
+   
 
     const [admin, client1, client2, technician, technician1] = savedUsers;
 
@@ -148,7 +148,7 @@ export class SeedService {
         equipmentType: EquipmentType.CELULAR,
         imei: '321098765432109',
         assignedTechnician: technician,
-        description: 'No enciende',
+        description: 'Cambio de display',
         status: OrderStatus.PENDING,
         user: client2,
       }),
@@ -165,7 +165,7 @@ export class SeedService {
     ];
 
     const savedOrders = await this.orderRepository.save(orders);
-    console.log(`✅ Se crearon ${savedOrders.length} órdenes`);
+    
 
     // Agregar evidencias a cada orden (2 evidencias por orden)
     const fileUrl = "https://res.cloudinary.com/dc73yo3jo/image/upload/v1739028403/uaujalru4u5zznijhlxn.jpg";
@@ -181,28 +181,35 @@ export class SeedService {
         }),
       ];
       await this.evidenceRepository.save(evidences);
-      console.log(`✅ Evidencias creadas para orden ID ${order.id}`);
+     
     }
 
     //Agregar historial de eventos a cada orden
     for (const order of savedOrders) {
       const orderHistories = [
         this.orderHistoryRepository.create({
-          event: 'Orden creada',
+          event: 'Servicio iniciado',
           order,
+          createdAt: new Date('2025-02-07T12:00:00')
+
+        }),
+        
+        this.orderHistoryRepository.create({
+          event: 'Servicio finalizado',
+          order,
+          createdAt: new Date('2025-02-08T12:00:00')
         }),
         this.orderHistoryRepository.create({
-          event: 'Asignada a técnico',
+          event: 'Factura pagada',
           order,
+          createdAt: new Date('2025-02-09T12:00:00')
         }),
         this.orderHistoryRepository.create({
-          event: 'Diagnóstico en curso',
+          event: `Equipo listo para entrega`,
           order,
+          createdAt: new Date('2025-02-10T12:00:00')
         }),
-        this.orderHistoryRepository.create({
-          event: `Estado actualizado a: ${order.status}`,
-          order,
-        }),
+        
       ];
       await this.orderHistoryRepository.save(orderHistories);
       console.log(`Historial creado para orden ID ${order.id}`);
