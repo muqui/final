@@ -35,6 +35,7 @@ export class OrdersController {
 
     return this.ordersService.getOrdersByClientEmail (clientEmail);
 
+
   }
 
   @Get ('technician/:technId') // Endpoint verificado!
