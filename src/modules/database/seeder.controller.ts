@@ -4,11 +4,11 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 
 
-@ApiTags('Seeder')
-@Controller('seeder')
+@ApiTags('database')
+@Controller('database')
 export class SeedController {
     constructor(private readonly seedService: SeedService) {}
-    @Get()
+    @Get('seeder')
   @ApiOperation({
     summary: 'Insertar informacion para users, orders, evidences iniciales',
     description: 'Este endpoint siembra datos iniciales d en la base de datos.',
@@ -18,7 +18,7 @@ export class SeedController {
      return this.seedService.seedData();
   }
 
- 
+  
 
  
 }

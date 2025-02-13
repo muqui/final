@@ -29,6 +29,36 @@ export class SeedService {
     private readonly dataSource: DataSource,
   ) {}
 
+  
+  async clearDatabase(): Promise<void> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    try {
+      await queryRunner.startTransaction();
+
+      // Truncate con CASCADE para evitar restricciones de FK
+      await queryRunner.query(`
+        TRUNCATE TABLE 
+          "orderhistories", 
+          "evidences", 
+          "orders", 
+          "users", 
+          "payments", 
+          "notifications"
+        RESTART IDENTITY CASCADE;
+      `);
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+
+/*
   async clearDatabase() {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -59,7 +89,7 @@ export class SeedService {
       await queryRunner.release();
     }
   }
-  
+  */
   async seedData() {
     this.clearDatabase();
     console.log('🌱 Iniciando precarga de datos...');
@@ -74,6 +104,7 @@ export class SeedService {
         password: hashedPassword,
         phone: '1234567890',
         role: Role.ADMIN,
+        dni: 123456780
       }),
       this.userRepository.create({
         name: 'Cliente1',
@@ -81,6 +112,7 @@ export class SeedService {
         password: hashedPassword,
         phone: '1234567891',
         role: Role.CLIENT,
+        dni: 123456781
       }),
       this.userRepository.create({
         name: 'Cliente2',
@@ -88,6 +120,7 @@ export class SeedService {
         password: hashedPassword,
         phone: '1234567892',
         role: Role.CLIENT,
+        dni: 123456782
       }),
       this.userRepository.create({
         name: 'Técnico',
@@ -95,6 +128,7 @@ export class SeedService {
         password: hashedPassword,
         phone: '1234567893',
         role: Role.TECHN,
+        dni: 123456783
       }),
       this.userRepository.create({
         name: 'Técnico1',
@@ -102,6 +136,7 @@ export class SeedService {
         password: hashedPassword,
         phone: '1234567893',
         role: Role.TECHN,
+        dni: 123456784
       }),
     ];
 
