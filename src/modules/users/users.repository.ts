@@ -1,15 +1,12 @@
-
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './User.entity';
 import { Repository } from 'typeorm';
 import { Role } from 'src/enum/Role.enum';
-import { SignUpUserDto } from 'src/dto/users/signUpUser.dto';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 
 @Injectable()
 export class UsersRepository {
@@ -21,21 +18,9 @@ export class UsersRepository {
     return await this.usersRepository.find();
   }
 
-  
-
-
-
-  
-
   async findUserById(id: string): Promise<User | null> {
-    return await this.findOne({ where: { id } });
+    return await this.usersRepository.findOne({ where: { id } });
   }
-}
-
-
-
-
-
 
   async findByRole(id: string, role: Role): Promise<User> {
     const userFound = await this.usersRepository.findOne({
@@ -48,7 +33,6 @@ export class UsersRepository {
 
     return userFound;
   }
-
 
   async changeRole(role: Partial<User>, id: string) {
     console.log(typeof role.role);
@@ -76,7 +60,4 @@ export class UsersRepository {
       message: 'Rol cambiado correctamente',
     };
   }
-
 }
-
-
