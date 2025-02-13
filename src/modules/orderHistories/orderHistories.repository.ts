@@ -1,43 +1,65 @@
 
 
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';  // Importar @InjectRepository
-import { Repository } from 'typeorm';  // Importar Repository de TypeORM
-import { OrderHistory } from './orderHistory.entity';  // Importar la entidad OrderHistory
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { OrderHistory } from './orderHistory.entity';
 
 @Injectable ()
 
 export class OrdersHistoriesRepository {
-
   constructor (
 
     @InjectRepository (OrderHistory)
 
-    private readonly orderHistoryRepository: Repository<OrderHistory>,  
+    private readonly orderHistoryRepository: Repository<OrderHistory>, 
 
   ) {}
+  
+  async getAllOrderHistories (): Promise<OrderHistory []> {
 
-
-  async create (orderHistoryData: Partial<OrderHistory>): Promise<OrderHistory> {
-
-    const orderHistory = this.orderHistoryRepository.create (orderHistoryData);
-    return this.orderHistoryRepository.save(orderHistory);
+    return await this.orderHistoryRepository.find ();
 
   }
 
-  async getAll (): Promise<OrderHistory[]> {
+  async getOrderHistory (orderId: string): Promise<OrderHistory []> {
 
-    return this.orderHistoryRepository.find ();
+    return await this.orderHistoryRepository.find ({
+
+      where: { order: { id: orderId } },
+      order: { createdAt: 'ASC' },
+
+    });
 
   }
 
-  async getById (orderId: string): Promise<OrderHistory[]> {
+  async createAndSaveOrderEvent (orderId: string, event: string, createdAt: Date): Promise<OrderHistory> {
 
-    return this.orderHistoryRepository.find ({ where: { order: { id: orderId } } });
+  const orderHistory = await this.createOrder (orderId, event, createdAt); 
+  return await this.saveOrder (orderHistory);
 
-  }    
+  }
+
+  async createOrder (orderId: string, event: string, createdAt: Date): Promise<OrderHistory> {
+
+    return this.orderHistoryRepository.create ({
+
+    order: { id: orderId }, 
+    event,
+    createdAt,
+
+    });
+
+  }
+
+  async saveOrder (orderHistory: OrderHistory): Promise<OrderHistory> {
+
+    return await this.orderHistoryRepository.save (orderHistory);
+
+  }
 
 }
+
 
 
 
