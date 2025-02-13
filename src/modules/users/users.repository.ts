@@ -1,13 +1,12 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './User.entity';
 import { Repository } from 'typeorm';
 import { Role } from 'src/enum/Role.enum';
-import { SignUpUserDto } from 'src/dto/users/signUpUser.dto';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 
 @Injectable()
 export class UsersRepository {
@@ -20,7 +19,7 @@ export class UsersRepository {
   }
 
   async findUserById(id: string): Promise<User | null> {
-    return this.usersRepository.findOne({ where: { id } });
+    return await this.usersRepository.findOne({ where: { id } });
   }
 
   async findByRole(id: string, role: Role): Promise<User> {

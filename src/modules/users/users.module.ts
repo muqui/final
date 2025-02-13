@@ -11,6 +11,7 @@ import { UsersRepository } from './users.repository';
   providers: [UsersService, UsersRepository],
 
 
+
   exports: [TypeOrmModule, UsersService, UsersRepository],
 
 })

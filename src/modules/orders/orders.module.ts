@@ -14,6 +14,7 @@ import { UsersModule } from '../users/users.module';
     forwardRef(() => OrderHistoriesModule),
     forwardRef(() => EvidencesModule), 
     forwardRef(() => UsersModule),
+    
   ],
 
   controllers: [OrdersController],

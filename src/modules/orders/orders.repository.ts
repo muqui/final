@@ -2,7 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { Order } from './Order.entity';
 import { CreateOrderDto } from 'src/dto/orders/createOrder.dto';
 import { UpdateOrderDto } from 'src/dto/orders/updateOrder.dto';
@@ -14,19 +14,13 @@ import { UpdateTechicalDataDto } from '../../dto/orders/updateTechData.dto';
 
 export class OrdersRepository  {
 
-  constructor (
+  constructor (private readonly entityManager: EntityManager,
 
     @InjectRepository (Order)
     private readonly ordersRepository: Repository<Order>,
 
-  ) {}
 
-  /*async createOrder (orderData: CreateOrderDto): Promise<Order> {
-
-    const order = this.ordersRepository.create (orderData);
-    return this.ordersRepository.save (order);
-
-  }*/
+  ) {} 
 
   async getAllOrders (): Promise<Order []> {
 
@@ -71,10 +65,23 @@ export class OrdersRepository  {
 
   /*async createOrder (orderData: CreateOrderDto): Promise<Order> {
 
-    const order = this.ordersRepository.create (orderData);
+    const order = this.create (orderData);
     return this.ordersRepository.save (order);
 
   }*/
+
+  async createOrder (orderData: Partial<Order>): Promise<Order> {
+
+    const order = this.entityManager.create (Order, orderData); 
+    return order;
+
+  }
+  
+  async saveOrder1 (order: Order): Promise<Order> {
+
+    return await this.entityManager.save (order);
+
+  }  
     
   async updateOrderStatus (
 
@@ -87,7 +94,7 @@ export class OrdersRepository  {
     const order = await this.getOrderById (id);
     if (!order) return null;
   
-    await this.ordersRepository.update(id, { status, statusHistory });  
+    await this.ordersRepository.update (id, { status, statusHistory });  
     return this.getOrderById (id);
 
   }       
@@ -113,6 +120,7 @@ export class OrdersRepository  {
   }
   
 }
+
 
 
 

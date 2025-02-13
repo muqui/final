@@ -17,21 +17,18 @@ import { EquipmentType } from '../../enum/equipmentype.enum';
 import { OrderStatus } from 'src/enum/orderstatus.enum';
 import { v7 as uuid } from 'uuid';
 
-@Entity ({ name: 'orders' })
+@Entity({ name: 'orders' })
 export class Order {
-  
-  @PrimaryGeneratedColumn ('uuid')
-  id: string = uuid ();
+  @PrimaryGeneratedColumn('uuid')
+  id: string = uuid();
 
-
-  @Column ({ name: 'clientEmail' })
-
+  @Column({ name: 'clientEmail' })
   clientEmail: string;
-  
-  @Column ({name: 'clientDni'})
+
+  @Column({ name: 'clientDni' })
   clientDni: number;
- 
-  @Column ({
+
+  @Column({
     type: 'enum',
     enum: EquipmentType,
     nullable: false,
@@ -40,15 +37,15 @@ export class Order {
   })
   equipmentType: EquipmentType;
 
-  @Column ()
-  imei: string; 
+  @Column()
+  imei: string;
 
-  @ManyToOne(() => User, { nullable: true }) 
+  @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: 'assignedTechnicianId' })
   assignedTechnician: User | null;
 
-  @Column ()
-  description: string;  
+  @Column()
+  description: string;
 
   @Column({
     type: 'enum',
@@ -60,20 +57,20 @@ export class Order {
 
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
- 
-  @ManyToOne (() => User, (user) => user.orders, { eager: true })
+
+  @ManyToOne(() => User, (user) => user.orders, { eager: true })
   @JoinColumn({ name: 'userId' })
   user: User;
 
   @OneToMany(() => OrderHistory, (orderHistory) => orderHistory.order)
-  orderHistories: OrderHistory [];
+  orderHistories: OrderHistory[];
 
   @OneToMany(() => Evidence, (evidence) => evidence.order)
   evidences: Evidence[];
 
   @OneToMany(() => Notification, (notification) => notification.order)
-  notifications: Notification [];
-  
+  notifications: Notification[];
+
   @OneToOne(() => Payment, (payment) => payment.order)
   payment: Payment;
 
