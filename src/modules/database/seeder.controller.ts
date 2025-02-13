@@ -11,7 +11,7 @@ export class SeedController {
     @Get('seeder')
   @ApiOperation({
     summary: 'Insertar informacion para users, orders, evidences iniciales',
-    description: 'Este endpoint siembra datos iniciales d en la base de datos.',
+    description: 'Este endpoint siembra datos iniciales d en la base de datos. Contraseña para todos los usuarios es 0123456789',
   })
   seedProducts() {
      

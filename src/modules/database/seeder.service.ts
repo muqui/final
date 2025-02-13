@@ -58,38 +58,7 @@ export class SeedService {
   }
 
 
-/*
-  async clearDatabase() {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-  
-    try {
-      await queryRunner.startTransaction();
-  
-      // Desactivar temporalmente las restricciones de claves foráneas
-      await queryRunner.query('SET session_replication_role = replica;');
-  
-      // Eliminar datos en el orden correcto
-      await queryRunner.query('DELETE FROM "orderhistories";');
-      await queryRunner.query('DELETE FROM "evidences";');
-      await queryRunner.query('DELETE FROM "orders";');
-      await queryRunner.query('DELETE FROM "users";');
-      await queryRunner.query('DELETE FROM "payments";');
-      await queryRunner.query('DELETE FROM "notifications";');
-  
-      // Reactivar restricciones de claves foráneas
-      await queryRunner.query('SET session_replication_role = DEFAULT;');
-  
-      await queryRunner.commitTransaction();
-      
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      
-    } finally {
-      await queryRunner.release();
-    }
-  }
-  */
+
   async seedData() {
     this.clearDatabase();
     console.log('🌱 Iniciando precarga de datos...');
