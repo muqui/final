@@ -24,7 +24,7 @@ export class User {
   email: string;
 
   @Column({
-    nullable: false,
+    nullable: true,
   })
   password: string;
 
@@ -34,11 +34,15 @@ export class User {
   phone: string;
 
   @Column({
-    nullable: false,
+    nullable: true,
     type: 'int',
-    default: 99999999,
+    
+
+    unique: true,
   })
   dni: number;
+
+
   @Column({
     type: 'enum',
     enum: Role,
@@ -53,6 +57,6 @@ export class User {
   createdAt: Date;
 
   @OneToMany(() => Order, (orders) => orders.user)
-  order: Order[];
+  orders: Order[];
 }
 

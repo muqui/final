@@ -9,8 +9,7 @@ export class CreateEvidenceDto {
   @IsString()
   orderId: string;
 
-  @ApiHideProperty()
-  @IsUrl()
-  @MinLength(1) // Oculta fileUrl en Swagger
+
+  @ApiHideProperty()  // Oculta fileUrl en Swagger
   fileUrl?: string;
 }

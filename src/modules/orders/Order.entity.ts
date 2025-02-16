@@ -1,7 +1,4 @@
-
-
 import {
-
   Column,
   Entity,
   ManyToOne,
@@ -9,7 +6,6 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   JoinColumn,
-
 } from 'typeorm';
 
 import { User } from '../users/User.entity';
@@ -21,72 +17,63 @@ import { EquipmentType } from '../../enum/equipmentype.enum';
 import { OrderStatus } from 'src/enum/orderstatus.enum';
 import { v7 as uuid } from 'uuid';
 
-@Entity ({ name: 'orders' })
+@Entity({ name: 'orders' })
 export class Order {
-  
-  @PrimaryGeneratedColumn ('uuid')
-  id: string = uuid ();
+  @PrimaryGeneratedColumn('uuid')
+  id: string = uuid();
 
-  @Column ({ name: 'clientEmail' })
-
+  @Column({ name: 'clientEmail' })
   clientEmail: string;
-  
-  @Column ({name: 'clientDni'})
-  clientDni: number;
- 
-  @Column ({
 
+  @Column({ name: 'clientDni' })
+  clientDni: number;
+
+  @Column({
     type: 'enum',
     enum: EquipmentType,
     nullable: false,
     /*default: EquipmentType.CELULAR,*/
     update: true,
-
   })
-
   equipmentType: EquipmentType;
 
-  @Column ()
-  imei: string; 
+  @Column()
+  imei: string;
 
-  @ManyToOne (() => User, { nullable: true }) 
-  @JoinColumn ({ name: 'assignedTechnicianId' })
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'assignedTechnicianId' })
   assignedTechnician: User | null;
 
-  @Column ()
-  description: string;  
+  @Column()
+  description: string;
 
-  @Column ({
-
+  @Column({
     type: 'enum',
     enum: OrderStatus,
     nullable: false,
     /*default: OrderStatus.STARTED,*/
-
   })
-
   status: OrderStatus;
 
-  @Column ({ type: 'boolean', default: true })
+  @Column({ type: 'boolean', default: true })
   isActive: boolean;
- 
-  @ManyToOne (() => User, (user) => user.order, { eager: true })
-  @JoinColumn ({ name: 'userId' })
+
+  @ManyToOne(() => User, (user) => user.orders, { eager: true })
+  @JoinColumn({ name: 'userId' })
   user: User;
 
-  @OneToMany (() => OrderHistory, (orderHistory) => orderHistory.order)
-  orderHistories: OrderHistory [];
+  @OneToMany(() => OrderHistory, (orderHistory) => orderHistory.order)
+  orderHistories: OrderHistory[];
 
-  @OneToMany (() => Evidence, (evidence) => evidence.order)
+  @OneToMany(() => Evidence, (evidence) => evidence.order)
   evidences: Evidence[];
 
-  @OneToMany (() => Notification, (notification) => notification.order)
-  notifications: Notification [];
-  
-  @OneToOne (() => Payment, (payment) => payment.order)
+  @OneToMany(() => Notification, (notification) => notification.order)
+  notifications: Notification[];
+
+  @OneToOne(() => Payment, (payment) => payment.order)
   payment: Payment;
 
-  @Column ({ type: 'jsonb', default: [] })
+  @Column({ type: 'jsonb', default: [] })
   statusHistory: { [key: string]: string }[];
-
 }

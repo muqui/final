@@ -21,7 +21,9 @@ import { OrdersModule } from '../orders/orders.module';
 
   providers: [OrderHistoriesService, OrdersHistoriesRepository],
 
+
   exports: [OrderHistoriesService],
+
   
 })
 

@@ -4,6 +4,10 @@ import {
   IsNumber,
   IsString,
   Length,
+
+  Max,
+  Min,
+
   MinLength,
 } from 'class-validator';
 
@@ -30,7 +34,9 @@ export class SignUpUserDto {
 
   @IsNotEmpty({ message: 'El campo DNI es Obligatorio' })
   @IsNumber()
-  @Length(8)
-  dni: number;
 
+  @Min(10000000)
+  @Max(99999999)
+  dni: number;
 }
+
