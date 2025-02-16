@@ -24,7 +24,7 @@ export class User {
   email: string;
 
   @Column({
-    nullable: false,
+    nullable: true,
   })
   password: string;
 
@@ -34,9 +34,9 @@ export class User {
   phone: string;
 
   @Column({
-    nullable: false,
+    nullable: true,
     type: 'int',
-    default: 99999999,
+    
 
     unique: true,
   })

@@ -5,6 +5,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../users/User.entity';
 
+import {config as dotenvConfig} from 'dotenv'
+import { Role } from 'src/enum/Role.enum';
+
+dotenvConfig();
+
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(
@@ -13,7 +18,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     super({
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: 'http://localhost:3000/auth/google/callback',
+      callbackURL: process.env.CALLBACKURL,
       scope: ['email', 'profile'],
     });
   }
@@ -33,10 +38,14 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       user = this.userRepository.create({
         email: emails[0].value,
         name: name.givenName,
+        password: null,
+        phone: '00000000',
+        role: Role.CLIENT,
+        dni: null
       });
       await this.userRepository.save(user);
     }
-
+   
     done(null, user);
   }
 }
