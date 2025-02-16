@@ -31,8 +31,6 @@ export class OrderHistory {
   @JoinColumn ({ name: 'order_id' })
   order: Order;
 
-
-
 }
 
 
