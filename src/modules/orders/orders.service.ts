@@ -1,9 +1,10 @@
-
-
-
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { OrdersRepository } from './orders.repository';
-
 import { UsersRepository } from '../users/users.repository';
 import { CreateOrderDto } from '../../dto/orders/createOrder.dto';
 import { Order } from './Order.entity';
@@ -14,7 +15,8 @@ import { EquipmentType } from 'src/enum/equipmentype.enum';
 import { OrderStatus } from 'src/enum/orderstatus.enum';
 import { User } from '../users/User.entity';
 import { Role } from 'src/enum/Role.enum';
-import { OrderHistoriesService } from '../orderHistories/orderHistories.service';  // Importamos OrderHistoriesService
+import { OrderHistoriesService } from '../orderHistories/orderHistories.service'; // Importamos OrderHistoriesService
+// import { PaymentsService } from '../payments/payments.service';
 
 @Injectable()
 export class OrdersService {
@@ -22,14 +24,8 @@ export class OrdersService {
     private readonly ordersRepository: OrdersRepository,
     private readonly usersRepository: UsersRepository,
 
-    private readonly orderHistoriesService: OrderHistoriesService, 
-
+    private readonly orderHistoriesService: OrderHistoriesService,
   ) {}
-
-  async getAllOrders (): Promise<Order []> {
-
-    return this.ordersRepository.getAllOrders ();
-  }
 
   async getAllOrders(): Promise<Order[]> {
     return this.ordersRepository.getAllOrders();
@@ -39,93 +35,39 @@ export class OrdersService {
     return this.ordersRepository.getOrdersByClientEmail(clientEmail);
   }
 
-
-  
-
   async getOrdersByTechnId(technId: string): Promise<Order[]> {
     return this.ordersRepository.getOrdersByTechnId(technId);
   }
 
-
-    return this.ordersRepository.getOrdersByTechnId (technId);
-
+  async getOrderById(id: string): Promise<Order> {
+    return this.ordersRepository.getOrderById(id);
   }
-
-
-  async getOrderById (id: string): Promise<Order> {
-
-    return this.ordersRepository.getOrderById (id);
-
-  }
-
-  async createOrder (createOrderDto: CreateOrderDto): Promise<Order> {
-
-    const { assignedTechnicianId, userId, clientId } = createOrderDto;
-
-    const client = await this.usersRepository.findByRole (clientId, Role.CLIENT);
-    if (!client) throw new NotFoundException ('Cliente no encontrado.');
-
-    const assignedTechnician = await this.usersRepository.findByRole (assignedTechnicianId, Role.TECHN);
-    if (!assignedTechnician) throw new NotFoundException ('Técnico no encontrado.');
-
-    const admin = await this.usersRepository.findByRole (userId, Role.ADMIN);
-    if (!admin) throw new NotFoundException ('El usuario que crea la orden debe ser un administrador.');
-
 
   async createOrder(createOrderDto: CreateOrderDto): Promise<Order> {
     const { assignedTechnicianId, userId, clientId } = createOrderDto;
 
-
-      id: "N/A",
-      name: "No asignado",
-      email: "no-asignado@example.com",
-      dni: 99999999,
-      password: "default",
-      phone: "000000000",
-      role: "unknown",
-      createdAt: new Date (),
-      order: [],
-
     const client = await this.usersRepository.findByRole(clientId, Role.CLIENT);
-    if (!client) {
-      throw new NotFoundException('Cliente no encontrado.');
-    }
-
+    if (!client) throw new NotFoundException('Cliente no encontrado.');
 
     const assignedTechnician = await this.usersRepository.findByRole(
       assignedTechnicianId,
       Role.TECHN,
     );
-    if (!assignedTechnician) {
+    if (!assignedTechnician)
       throw new NotFoundException('Técnico no encontrado.');
-    }
-
-
-    const orderData: Partial<Order> = {
-
-      clientEmail: client?.email ?? "No asignado",
-      clientDni: client?.dni ?? 99999999,
-      assignedTechnician: assignedTechnician ?? defaultUser,
-      user: admin ?? defaultUser,
-      equipmentType: EquipmentType.EQUIPO,
-      imei: "000000000000000",
-      description: "[Editar ...]",
-      status: OrderStatus.ACTUALIZAR,
-      isActive: true,
-      statusHistory: [],
 
     const admin = await this.usersRepository.findByRole(userId, Role.ADMIN);
-    if (!admin) {
+    if (!admin)
       throw new NotFoundException(
         'El usuario que crea la orden debe ser un administrador.',
       );
-    }
 
     const defaultUser: User = {
       id: 'N/A',
       name: 'No asignado',
       email: 'no-asignado@example.com',
       dni: 99999999,
+
       password: 'default',
       phone: '000000000',
       role: 'unknown',
@@ -133,30 +75,14 @@ export class OrdersService {
       orders: [],
     };
 
-
-    const validateOrderDto: CreateOrderDto = {
-      userId: admin?.id ?? 'N/A',
-      assignedTechnicianId: assignedTechnician?.id ?? 'N/A',
-      clientId: client?.id ?? 'N/A',
-    };
-
-
-    const newOrder = await this.ordersRepository.createOrder (orderData);
-    return await this.ordersRepository.saveOrder1 (newOrder);
-
-  }
-
-  async updateTechnicalData (id: string, updateTechnicalDataDto: UpdateTechicalDataDto): Promise<Order> {
-
-    const order = await this.ordersRepository.getOrderById (id);
-
-
     const orderData: Partial<Order> = {
       clientEmail: client?.email ?? 'No asignado',
+
       clientDni: client?.dni ?? 99999999,
       assignedTechnician: assignedTechnician ?? defaultUser,
       user: admin ?? defaultUser,
       equipmentType: EquipmentType.EQUIPO,
+
       imei: '000000000000000',
       description: '[Editar ...]',
       status: OrderStatus.ACTUALIZAR,
@@ -182,11 +108,8 @@ export class OrdersService {
       );
     }
 
-
-    await this.ordersRepository.saveOrder (id, updateTechnicalDataDto);
-    return this.ordersRepository.getOrderById (id);
-
-
+    await this.ordersRepository.saveOrder(id, updateTechnicalDataDto);
+    return this.ordersRepository.getOrderById(id);
   }
 
   async updateOrderStatus(
@@ -194,72 +117,26 @@ export class OrdersService {
     updateStatusDto: UpdateStatusDto,
   ): Promise<Order> {
     const order = await this.ordersRepository.getOrderById(id);
+    if (!order) throw new NotFoundException(`Orden con ID ${id} no encontrada`);
 
-
-    const order = await this.ordersRepository.getOrderById (id);
-    if (!order) throw new NotFoundException (`Orden con ID ${id} no encontrada`);
-
-    
-
-
-    
-
-
-    
-
-    if (!order.assignedTechnician.id) {
-
-      throw new ForbiddenException ('No se puede verificar el técnico asignado.');
-
+    if (!order.assignedTechnician) {
+      throw new ForbiddenException('La orden no tiene un técnico asignado.');
     }
-
-    if (!order.statusHistory) {
-
-    if (!order.assignedTechnician.id) {
-      throw new ForbiddenException(
-        'No se puede verificar el técnico asignado.',
-      );
-    }
-
 
     if (!order.statusHistory) {
       order.statusHistory = [];
     }
 
-
     const statusRecord = {
-
-      [updateStatusDto.status]: new Date ().toISOString ().replace ("T", " ").split (".")[0],
-
-    };
-
-    order.statusHistory.push (statusRecord);
-
-    await this.orderHistoriesService.registerEvent (id, updateStatusDto.status);
-
-    return this.ordersRepository.updateOrderStatus (id, updateStatusDto.status, order.statusHistory);
-  }
-
-  async inactiveDelete (id: string, { isActive }: UpdateOrderDto): Promise<{ message: string }> {
-
-    const order = await this.ordersRepository.findOrderById (id);
-    if (!order) throw new NotFoundException (`Orden con ID ${id} no encontrada.`);
-
-    if (order.isActive && isActive === false) {
-
-      await this.ordersRepository.updateOrder (id, { isActive: false });
-      return { message: `Orden con ID ${id} ha sido inactivada correctamente.` };
-    }
-
-    throw new BadRequestException (`No se puede reactivar una orden inactiva.`);
-
-
-    order.statusHistory.push({
       [updateStatusDto.status]: new Date()
         .toISOString()
         .replace('T', ' ')
         .split('.')[0],
-    });
+    };
+
+    order.statusHistory.push(statusRecord);
+
+    await this.orderHistoriesService.registerEvent(id, updateStatusDto.status);
 
     return this.ordersRepository.updateOrderStatus(
       id,
@@ -283,14 +160,6 @@ export class OrdersService {
       };
     }
 
-
     throw new BadRequestException(`No se puede reactivar una orden inactiva.`);
   }
-
-
 }
-
-
-
-
-

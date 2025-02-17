@@ -20,4 +20,8 @@ export class UsersService {
   async changeRole(role: Partial<User>, id: string) {
     return await this.usersRepository.changeRole(role, id);
   }
+
+  async changePassword(id: string, password: Partial<User>) {
+    return await this.usersRepository.changePassword(id, password);
+  }
 }

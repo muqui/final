@@ -30,19 +30,36 @@ export class Payment {
     nullable: false,
 
   })
+
   price: number;
 
   @Column ({
 
     type: 'timestamp',
-    nullable: false,
+    nullable: true,
     precision: 0,
 
   })
+
   invoicePaidAt: Date;
+
+  @Column ({
+
+    type: 'varchar',
+    length: 20,
+    nullable: false,
+    default: 'pending',
+    
+  })
+
+  status: string;
+
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  externalOrderId: string;
 
   @OneToOne ( () => Order, (order) => order.payment)
   @JoinColumn ({ name: 'order_id' })
   order: Order;
 
 }
+

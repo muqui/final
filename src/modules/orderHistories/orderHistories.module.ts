@@ -1,30 +1,22 @@
-
-
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrderHistoriesController } from './orderHistories.controller';
 import { OrderHistoriesService } from './orderHistories.service';
 import { OrderHistory } from './orderHistory.entity';
-import { OrdersHistoriesRepository } from './orderHistories.repository'; 
+import { OrdersHistoriesRepository } from './orderHistories.repository';
 import { OrdersModule } from '../orders/orders.module';
 
-@Module ({
-
+@Module({
   imports: [
+    TypeOrmModule.forFeature([OrderHistory]),
 
-    TypeOrmModule.forFeature ([OrderHistory]),
-
-    forwardRef (() => OrdersModule),
+    forwardRef(() => OrdersModule),
   ],
 
   controllers: [OrderHistoriesController],
 
   providers: [OrderHistoriesService, OrdersHistoriesRepository],
 
-
-  exports: [OrderHistoriesService],
-
-  
+  exports: [TypeOrmModule, OrderHistoriesService],
 })
-
 export class OrderHistoriesModule {}

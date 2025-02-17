@@ -59,6 +59,7 @@ export class AuthService {
 
     return {
       success: 'Registro Completado con exito',
+      newUser,
     };
   }
 

@@ -10,9 +10,6 @@ import { UsersRepository } from './users.repository';
   controllers: [UsersController],
   providers: [UsersService, UsersRepository],
 
-
-
   exports: [TypeOrmModule, UsersService, UsersRepository],
-
 })
 export class UsersModule {}

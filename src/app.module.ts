@@ -18,6 +18,7 @@ envConfig({
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { MailModule } from './modules/mail/mail.module';
 import { DatabaseModule } from './modules/database/seeder.module';
+import { StripeModule } from './stripe/stripe.module';
 
 @Module({
   imports: [
@@ -40,7 +41,8 @@ import { DatabaseModule } from './modules/database/seeder.module';
     AuthModule,
     NotificationsModule,
     MailModule,
-    DatabaseModule
+    DatabaseModule,
+    StripeModule
   ],
   controllers: [],
   providers: [],

@@ -7,6 +7,7 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersRepository {
@@ -14,7 +15,7 @@ export class UsersRepository {
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
   ) {}
 
-  async findAll() {
+  async findAll(): Promise<User[]> {
     return await this.usersRepository.find();
   }
 
@@ -34,7 +35,7 @@ export class UsersRepository {
     return userFound;
   }
 
-  async changeRole(role: Partial<User>, id: string) {
+  async changeRole(role: Partial<User>, id: string): Promise<Object> {
     console.log(typeof role.role);
 
     const userFound = await this.usersRepository.findOne({ where: { id } });
@@ -59,5 +60,23 @@ export class UsersRepository {
       success: true,
       message: 'Rol cambiado correctamente',
     };
+  }
+
+  async changePassword(id: string, password: Partial<User>): Promise<Object> {
+    try {
+      const user = await this.usersRepository.findOneOrFail({ where: { id } });
+
+      const hashedPassword = await bcrypt.hash(password.password, 10);
+
+      await this.usersRepository.update(id, { password: hashedPassword });
+
+      return {
+        success: true,
+        message: 'Contraseña Cambiada',
+        user,
+      };
+    } catch (error) {
+      throw new NotFoundException('El usuario no existe');
+    }
   }
 }

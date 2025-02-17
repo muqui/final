@@ -118,6 +118,11 @@ export class OrdersRepository  {
     return this.ordersRepository.findOne ({ where: { id } });
 
   }
+
+  async findOne(id: string): Promise<Order | null> {
+    return this.ordersRepository.findOne({ where: { id } });
+  }
+  
   
 }
 
